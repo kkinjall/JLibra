@@ -150,5 +150,70 @@ public class MainTest {
         assertEquals(null, library.getCurrentUser());
     }
 
+    @Test
+    @DisplayName("Check if no notification is displayed if a borrower has no books on hold")
+    void RESP_05_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        StringWriter output2 = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        library.notifyOfAvailableBooks(new PrintWriter(output2));
+
+        //check if no notification is printed
+        assertEquals("", output2.toString().trim());
+    }
+
+    @Test
+    @DisplayName("Check if no notification is displayed if a borrower has books on hold that are not available")
+    void RESP_05_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        StringWriter output2 = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+
+        library.addBookOnHold("Persepolis");
+        library.addBookOnHold("The Color Purple");
+        library.getBookByTitle("Persepolis").setStatus(BookStatus.CHECKED_OUT);
+        library.getBookByTitle("The Color Purple").setStatus(BookStatus.CHECKED_OUT);
+
+        library.notifyOfAvailableBooks(new PrintWriter(output2));
+
+        //check if no notification is printed
+        assertEquals("", output2.toString().trim());
+    }
+
+    @Test
+    @DisplayName("Check if a notification is displayed if a borrower has books on hold and they are available")
+    void RESP_05_test_03() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+
+        library.addBookOnHold("Beloved");
+        library.addBookOnHold("The Color Purple");
+        library.addBookOnHold("The Yellow Library");
+        library.getBookByTitle("Beloved").setStatus(BookStatus.ON_HOLD);
+        library.getBookByTitle("The Color Purple").setStatus(BookStatus.ON_HOLD);
+        library.getBookByTitle("The Yellow Library").setStatus(BookStatus.CHECKED_OUT);
+
+        library.notifyOfAvailableBooks(new PrintWriter(output));
+
+        //check that only the books with status On Hold are printed in the notification
+        assertTrue(output.toString().contains("Beloved"));
+        assertTrue(output.toString().contains("The Color Purple"));
+        assertFalse(output.toString().contains("The Yellow Library"));
+    }
 
 }

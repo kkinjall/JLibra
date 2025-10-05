@@ -24,4 +24,9 @@ public class Book {
         return author;
     }
 
+    //setters
+    public void setStatus(BookStatus newStatus){
+        status = newStatus;
+    }
+
 }

@@ -69,6 +69,10 @@ public class Library {
         return false;
     }
 
+    public void notifyOfAvailableBooks(PrintWriter output){
+        output.println("Persepolis");
+    }
+
     public String getCurrentUser(){
         return currentUser;
     }
@@ -96,5 +100,9 @@ public class Library {
             }
         }
         return null;
+    }
+
+    public boolean addBookOnHold(String title){
+        return false;
     }
 }
