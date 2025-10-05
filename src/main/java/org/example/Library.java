@@ -18,7 +18,8 @@ public class Library {
         books.clear();
 
         borrowers.add(new Borrower("spongebob", "ilovegary!"));
-        borrowers.add(new Borrower("spongebob", "texasgurl004"));
+        borrowers.add(new Borrower("sandy_cheeks", "texasgurl004"));
+        borrowers.add(new Borrower("squidwardTentacles", "0clarinet_fan0"));
 
         books.add(new Book("A Room of One’s Own", "Virginia Woolf"));
         books.add(new Book("The Feminine Mystique", "Betty Friedan"));
