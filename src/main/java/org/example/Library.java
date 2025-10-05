@@ -84,6 +84,10 @@ public class Library {
         }
     }
 
+    public void displayMenu(PrintWriter output){
+        output.println("menu");
+    }
+
     public boolean addBookOnHold(String title){
         Book book = getBookByTitle(title);
         book.addHoldQueue(currentUser);

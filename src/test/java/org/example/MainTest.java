@@ -216,4 +216,20 @@ public class MainTest {
         assertFalse(output.toString().contains("The Yellow Library"));
     }
 
+    @Test
+    @DisplayName("Check if menu options to borrow book, return book, and logout are displayed")
+    void RESP_06_test_01() {
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+        library.displayMenu(new PrintWriter(output));
+
+        String menu = "\n--- Library Menu ---\n" +
+                "1. Borrow a book\n" +
+                "2. Return a book\n" +
+                "3. Logout\n" +
+                "Enter choice (1-3): ";
+
+        assertTrue(output.toString().contains(menu));
+    }
+
 }
