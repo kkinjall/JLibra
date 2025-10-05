@@ -3,6 +3,8 @@ package org.example;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /*Test file for all Responsibilities and corresponding unit tests*/
@@ -45,6 +47,43 @@ public class MainTest {
         //check if each of their status is available
         for (Book book : library.getBooks()) {
             assertEquals(BookStatus.AVAILABLE, book.getStatus());
+        }
+    }
+
+    @Test
+    @DisplayName("Check library initialized with exactly 3 borrower accounts")
+    void RESP_02_test_01(){
+        Library library = new Library();
+        library.initializeLibrary();
+        int numOfBorrowers = library.getNumBorrowers();
+        assertEquals(3, numOfBorrowers);
+    }
+
+    @Test
+    @DisplayName("Check all borrower accounts are unique")
+    void RESP_02_test_02(){
+        Library library = new Library();
+        library.initializeLibrary();
+
+        //get number of unique usernames
+        long count = library.getBorrowers().stream()
+                .map(Borrower::getUsername)
+                .distinct()
+                .count();
+
+        //check if number of usernames is equal to number of borrowers
+        assertEquals(library.getBorrowers().size(), count);
+    }
+
+    @Test
+    @DisplayName("Check all borrower accounts initially have zero borrowed books")
+    void RESP_02_test_03(){
+        Library library = new Library();
+        library.initializeLibrary();
+
+        //check all initialized borrowers have 0 books borrowed
+        for (Borrower borrower : library.getBorrowers()) {
+            assertEquals(0, borrower.getNumBorrowedBooks());
         }
     }
 }

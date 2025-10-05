@@ -5,15 +5,20 @@ import java.util.List;
 
 public class Library {
     private List<Book> books;
+    private List<Borrower> borrowers;
 
     //constructor
     public Library(){
         this.books = new ArrayList<Book>();
+        this.borrowers = new ArrayList<Borrower>();
     }
 
     //initialize library with 20 books
     public void initializeLibrary(){
         books.clear();
+
+        borrowers.add(new Borrower("spongebob", "ilovegary!"));
+        borrowers.add(new Borrower("spongebob", "texasgurl004"));
 
         books.add(new Book("A Room of One’s Own", "Virginia Woolf"));
         books.add(new Book("The Feminine Mystique", "Betty Friedan"));
@@ -41,8 +46,16 @@ public class Library {
         return books.size();
     }
 
+    public int getNumBorrowers(){
+        return borrowers.size();
+    }
+
     public List<Book> getBooks(){
         return books;
+    }
+
+    public List<Borrower> getBorrowers(){
+        return borrowers;
     }
 
     public Book getBookByTitle(String title){
