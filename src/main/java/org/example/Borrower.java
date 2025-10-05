@@ -1,15 +1,22 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 public class Borrower {
     private String username;
     private String password;
     private int numBorrowedBooks;
+    private List<Book> booksOnHold;
 
     //constructor
     public Borrower(String username, String password) {
         this.username = username;
         this.password = password;
         this.numBorrowedBooks = 0;
+        this.booksOnHold = new ArrayList<>();
     }
 
     public String getUsername(){
@@ -22,5 +29,9 @@ public class Borrower {
 
     public int getNumBorrowedBooks(){
         return numBorrowedBooks;
+    }
+
+    public List<Book> getBooksOnHold(){
+        return booksOnHold;
     }
 }

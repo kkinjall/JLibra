@@ -20,6 +20,7 @@ public class Library {
     //initialize library with 20 books
     public void initializeLibrary(){
         books.clear();
+        borrowers.clear();
 
         borrowers.add(new Borrower("spongebob", "ilovegary!"));
         borrowers.add(new Borrower("sandy_cheeks", "texasgurl004"));
@@ -69,10 +70,28 @@ public class Library {
         return false;
     }
 
-    public void notifyOfAvailableBooks(PrintWriter output){
-        output.println("Persepolis");
+    public void notifyOfAvailableBooks(PrintWriter out){
+        if (currentUser == null) return;
+
+        for (Book book : getBooks()) {
+            //if book is available and the book's hold queue has the borrower next in line...
+            //print notification
+            if (!book.getHoldQueue().isEmpty()) {
+                if (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().peek().equals(currentUser)) {
+                    out.println("Book: " + book.getTitle() + ", previously on hold is now available");
+                }
+            }
+        }
     }
 
+    public boolean addBookOnHold(String title){
+        Book book = getBookByTitle(title);
+        book.addHoldQueue(currentUser);
+        return true;
+    }
+
+
+    //Getters
     public String getCurrentUser(){
         return currentUser;
     }
@@ -100,9 +119,5 @@ public class Library {
             }
         }
         return null;
-    }
-
-    public boolean addBookOnHold(String title){
-        return false;
     }
 }
