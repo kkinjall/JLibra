@@ -3,9 +3,14 @@ package org.example;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
+import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*Test file for all Responsibilities and corresponding unit tests*/
 public class MainTest {
@@ -85,5 +90,35 @@ public class MainTest {
         for (Borrower borrower : library.getBorrowers()) {
             assertEquals(0, borrower.getNumBorrowedBooks());
         }
+    }
+
+    @Test
+    @DisplayName("Check valid borrower authentication succeeds")
+    void RESP_03_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+
+        boolean correctCredentials = library.authenticateUser(scanner, new PrintWriter(output));
+        assertTrue(correctCredentials);
+        assertTrue(output.toString().contains("Authentication successful!"));
+    }
+
+    @Test
+    @DisplayName("Check invalid borrower authentication fails")
+    void RESP_03_test_02() {
+        String input = "spongemop\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+
+        boolean incorrectCredentials = library.authenticateUser(scanner, new PrintWriter(output));
+        assertFalse(incorrectCredentials);
+        assertTrue(output.toString().contains("Authentication unsuccessful"));
     }
 }

@@ -1,7 +1,9 @@
 package org.example;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Library {
     private List<Book> books;
@@ -41,6 +43,11 @@ public class Library {
         books.add(new Book("I Know Why the Caged Bird Sings", "Maya Angelou"));
         books.add(new Book("Women Don't Owe You Pretty", "Florence Given"));
         books.add(new Book("Just Keep Walking", "Erin Soderberg"));
+    }
+
+    public boolean authenticateUser(Scanner input, PrintWriter output){
+        output.println("unsuccessful");
+        return false;
     }
 
     public int getNumBooks(){
