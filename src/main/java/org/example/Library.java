@@ -8,11 +8,13 @@ import java.util.Scanner;
 public class Library {
     private List<Book> books;
     private List<Borrower> borrowers;
+    private String currentUser;
 
     //constructor
     public Library(){
         this.books = new ArrayList<Book>();
         this.borrowers = new ArrayList<Borrower>();
+        currentUser = null;
     }
 
     //initialize library with 20 books
@@ -56,6 +58,7 @@ public class Library {
         //for all borrowers, if the username or password entered matches any of theirs authentication is successful
         for (Borrower borrower: borrowers){
             if (borrower.getUsername().equals(username) && borrower.getPassword().equals(password)) {
+                currentUser = borrower.getUsername();
                 output.println("Authentication successful!");
                 output.flush();
                 return true;
@@ -67,7 +70,7 @@ public class Library {
     }
 
     public String getCurrentUser(){
-        return "no one";
+        return currentUser;
     }
 
     public int getNumBooks(){
