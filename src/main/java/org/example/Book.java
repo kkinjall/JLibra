@@ -9,7 +9,7 @@ public class Book {
     public Book(String title, String author) {
         this.title = title;
         this.author = author;
-        this.status = BookStatus.CHECKED_OUT;
+        this.status = BookStatus.AVAILABLE;
     }
 
     public BookStatus getStatus(){
@@ -17,7 +17,7 @@ public class Book {
     }
 
     public String getTitle(){
-        return "title";
+        return title;
     }
 
     public String getAuthor(){
