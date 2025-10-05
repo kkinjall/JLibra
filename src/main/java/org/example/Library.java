@@ -85,7 +85,12 @@ public class Library {
     }
 
     public void displayMenu(PrintWriter output){
-        output.println("menu");
+        String menu = "\n--- Library Menu ---\n" +
+                "1. Borrow a book\n" +
+                "2. Return a book\n" +
+                "3. Logout\n" +
+                "Enter choice (1-3): ";
+        output.println(menu);
     }
 
     public boolean addBookOnHold(String title){

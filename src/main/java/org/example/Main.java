@@ -21,6 +21,19 @@ public class Main {
             while (!loggedIn) {
                 loggedIn = library.authenticateUser(scanner, output);
             }
+
+            // Main menu loop
+            boolean inMenu = true;
+            while (inMenu) {
+                library.displayMenu(output);
+
+                String choice = scanner.nextLine();
+
+                switch (choice) {
+                    case "1":
+                        break;
+                }
+            }
         }
     }
 }
