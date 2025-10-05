@@ -46,7 +46,23 @@ public class Library {
     }
 
     public boolean authenticateUser(Scanner input, PrintWriter output){
-        output.println("unsuccessful");
+        output.print("Enter username: ");
+        output.flush();
+        String username = input.nextLine();
+        output.print("Enter password: ");
+        output.flush();
+        String password = input.nextLine();
+
+        //for all borrowers, if the username or password entered matches any of theirs authentication is successful
+        for (Borrower borrower: borrowers){
+            if (borrower.getUsername().equals(username) && borrower.getPassword().equals(password)) {
+                output.println("Authentication successful!");
+                output.flush();
+                return true;
+            }
+        }
+        output.println("Authentication unsuccessful");
+        output.flush();
         return false;
     }
 
