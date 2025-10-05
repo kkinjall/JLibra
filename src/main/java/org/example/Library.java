@@ -66,6 +66,10 @@ public class Library {
         return false;
     }
 
+    public String getCurrentUser(){
+        return "no one";
+    }
+
     public int getNumBooks(){
         return books.size();
     }

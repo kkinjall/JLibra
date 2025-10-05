@@ -121,4 +121,34 @@ public class MainTest {
         assertFalse(incorrectCredentials);
         assertTrue(output.toString().contains("Authentication unsuccessful"));
     }
+
+    @Test
+    @DisplayName("Check authenticated borrower is set as current user for session (session established)")
+    void RESP_04_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+
+        assertEquals("spongebob", library.getCurrentUser());
+    }
+
+    @Test
+    @DisplayName("Check not authenticated borrower is not set as current user (session not established)")
+    void RESP_04_test_02() {
+        String input = "spongebob\n!ilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+
+        assertEquals(null, library.getCurrentUser());
+    }
+
+
 }
