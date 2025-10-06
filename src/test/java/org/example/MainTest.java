@@ -249,7 +249,7 @@ public class MainTest {
         scanner = new Scanner(input);
         output.flush();
 
-        library.displayBookDetails(scanner, new PrintWriter(output));
+        library.displayBookCollection(scanner, new PrintWriter(output));
         assertTrue(output.toString().contains("Current number of books borrowed: " + 0));
     }
 
@@ -274,7 +274,7 @@ public class MainTest {
         scanner = new Scanner(input);
         output.flush();
 
-        library.displayBookDetails(scanner, new PrintWriter(output));
+        library.displayBookCollection(scanner, new PrintWriter(output));
         //check if count is two
         assertTrue(output.toString().contains("Current number of books borrowed: " + 2));
     }
@@ -295,7 +295,7 @@ public class MainTest {
         input = "1\n";
         scanner = new Scanner(input);
         output.flush();
-        library.displayBookDetails(scanner, new PrintWriter(output));
+        library.displayBookCollection(scanner, new PrintWriter(output));
 
         //check if titles and corresponding authors are printed
         //check for first, tenth and twentieth books
@@ -328,7 +328,7 @@ public class MainTest {
         input = "1\n";
         scanner = new Scanner(input);
         output.flush();
-        library.displayBookDetails(scanner, new PrintWriter(output));
+        library.displayBookCollection(scanner, new PrintWriter(output));
 
         //check if statuses are correct for a selection of books
         assertTrue(output.toString().contains("Title: Sister Outsider, Author: Audre Lorde, Status: AVAILABLE"));
@@ -357,7 +357,7 @@ public class MainTest {
         input = "1\n";
         scanner = new Scanner(input);
         output.flush();
-        library.displayBookDetails(scanner, new PrintWriter(output));
+        library.displayBookCollection(scanner, new PrintWriter(output));
 
         //check if due date heading is present for a selection of books
         assertTrue(output.toString().contains("Title: Sister Outsider, Author: Audre Lorde, Status: ON_HOLD"));
