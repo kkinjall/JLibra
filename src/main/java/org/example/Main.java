@@ -31,6 +31,12 @@ public class Main {
 
                 switch (choice) {
                     case "1":
+                        library.displayBookCollection(new Scanner("1\n"), output);
+                        while (true){
+                            if (library.selectBookToBorrow(scanner, output)) {
+                                break;
+                            }
+                        }
                         break;
                 }
             }

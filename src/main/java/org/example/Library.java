@@ -148,7 +148,13 @@ public class Library {
     }
 
     public boolean selectBookToBorrow(Scanner scanner, PrintWriter output){
-       return true;
+        output.println();
+        output.println("Enter the number of the book you would like to borrow: ");
+        Book book = getBookByNumber(Integer.parseInt(scanner.nextLine())); //find book by number
+
+        //print book details and confirmation
+        output.println("You've selected " + book.getTitle() + " by " + book.getAuthor() + ". Proceed with borrowing? (y/n)");
+        return true;
     }
 
     //Getters
@@ -179,6 +185,10 @@ public class Library {
             }
         }
         return null;
+    }
+
+    public Book getBookByNumber(int index) {
+        return books.get(index - 1);
     }
 
     public Borrower findBorrower(String username) {
