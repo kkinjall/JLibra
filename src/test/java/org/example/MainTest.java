@@ -620,4 +620,181 @@ public class MainTest {
                 output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
                 0); //check if the last occurrence has been displayed at the end
     }
+
+    @Test
+    @DisplayName("Check if hold in queue is recorded when confirmed by borrower, exit to display collection")
+    void RESP_13_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        PrintWriter writer = new PrintWriter(output);
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, writer);
+        writer.flush();
+
+        output = new StringWriter();
+        writer = new PrintWriter(output);
+
+        Book book = library.getBookByNumber(5);
+        book.setStatus(BookStatus.ON_HOLD);
+        book.addHoldQueue("sandy_cheeks");
+
+        boolean exitBorrow = false;
+        int attempt = 0;
+
+        // Simulate borrow loop once
+        while (!exitBorrow && attempt < 2) {
+            library.displayBookCollection(new Scanner("1\n"), writer);
+            if (library.selectBookToBorrow(new Scanner("5\ny\ny\n"), writer)) {
+                exitBorrow = true;
+            }
+            attempt += 1;
+        }
+
+        int lastIndex = output.toString().lastIndexOf("---Collection of Books---"); //get the last occurrence of the collection
+
+        assertTrue(output.toString().contains("You have been added to the hold queue for this book"));
+        assertTrue(library.getBookByNumber(5).getHoldQueue().contains("spongebob"));
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "---Collection of Books---".length(),
+                output.toString().substring(lastIndex).length() - "---Collection of Books---".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
+
+    @Test
+    @DisplayName("Check if hold in queue is recorded when confirmed by borrower, exit to main menu")
+    void RESP_13_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\ny\n";
+        scanner = new Scanner(input);
+        output = new StringWriter();
+
+        //add books to reach borrower's 3 book borrow limit
+        library.borrowBook("Beloved");
+        library.borrowBook("To the Lighthouse");
+        library.borrowBook("The Color Purple");
+
+        int attempt = 0;
+        while (attempt < 2) {
+            library.displayMenu(new PrintWriter(output));
+
+            if (attempt < 1) {
+                while (true) {
+                    library.displayBookCollection(new Scanner("1\n"), new PrintWriter(output));
+                    if (library.selectBookToBorrow(scanner, new PrintWriter(output))) {
+                        break;
+                    }
+                }
+            }
+            attempt += 1;
+        }
+
+        int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
+
+        assertTrue(output.toString().contains("You have been added to the hold queue for this book"));
+        assertTrue(library.getBookByNumber(5).getHoldQueue().contains("spongebob"));
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),
+                output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
+
+
+    @Test
+    @DisplayName("Check if hold in queue is not recorded when denied by borrower, exit to display collection")
+    void RESP_13_test_03() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        PrintWriter writer = new PrintWriter(output);
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, writer);
+        writer.flush();
+
+        output = new StringWriter();
+        writer = new PrintWriter(output);
+
+        Book book = library.getBookByNumber(5);
+        book.setStatus(BookStatus.ON_HOLD);
+        book.addHoldQueue("sandy_cheeks");
+
+        boolean exitBorrow = false;
+        int attempt = 0;
+
+        // Simulate borrow loop once
+        while (!exitBorrow && attempt < 2) {
+            library.displayBookCollection(new Scanner("1\n"), writer);
+            if (library.selectBookToBorrow(new Scanner("5\ny\nn\n"), writer)) {
+                exitBorrow = true;
+            }
+            attempt += 1;
+        }
+
+        int lastIndex = output.toString().lastIndexOf("---Collection of Books---"); //get the last occurrence of the collection
+
+        assertTrue(output.toString().contains("Hold cancelled"));
+        assertFalse(library.getBookByNumber(5).getHoldQueue().contains("spongebob"));
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "---Collection of Books---".length(),
+                output.toString().substring(lastIndex).length() - "---Collection of Books---".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
+
+    @Test
+    @DisplayName("Check if hold in queue is not recorded when denied by borrower, exit to main menu")
+    void RESP_13_test_04() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\nn\n";
+        scanner = new Scanner(input);
+        output = new StringWriter();
+
+        //add books to reach borrower's 3 book borrow limit
+        library.borrowBook("Beloved");
+        library.borrowBook("To the Lighthouse");
+        library.borrowBook("The Color Purple");
+
+        int attempt = 0;
+        while (attempt < 2) {
+            library.displayMenu(new PrintWriter(output));
+
+            if (attempt < 1) {
+                while (true) {
+                    library.displayBookCollection(new Scanner("1\n"), new PrintWriter(output));
+                    if (library.selectBookToBorrow(scanner, new PrintWriter(output))) {
+                        break;
+                    }
+                }
+            }
+            attempt += 1;
+        }
+
+        int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
+
+        assertTrue(output.toString().contains("Hold cancelled"));
+        assertFalse(library.getBookByNumber(5).getHoldQueue().contains("spongebob"));
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),
+                output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
 }
