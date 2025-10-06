@@ -154,6 +154,16 @@ public class Library {
 
         //print book details and confirmation
         output.println("You've selected " + book.getTitle() + " by " + book.getAuthor() + ". Proceed with borrowing? (y/n)");
+
+        String confirm = "";
+        if (scanner.hasNextLine()) { confirm = scanner.nextLine().trim();}
+        if (confirm.equalsIgnoreCase("Y")) {
+            output.println("Borrowing transaction in progress...");
+        }
+        else{
+            output.println("Borrowing cancelled.");
+            return false;
+        }
         return true;
     }
 

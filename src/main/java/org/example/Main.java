@@ -31,9 +31,11 @@ public class Main {
 
                 switch (choice) {
                     case "1":
-                        library.displayBookCollection(new Scanner("1\n"), output);
-                        while (true){
+                        boolean exitBorrow = false;
+                        while (!exitBorrow){
+                            library.displayBookCollection(new Scanner("1\n"), output);
                             if (library.selectBookToBorrow(scanner, output)) {
+                                exitBorrow = true;
                                 break;
                             }
                         }
