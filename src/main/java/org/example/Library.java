@@ -115,8 +115,34 @@ public class Library {
     }
 
     public void displayBookDetails(Scanner scanner, PrintWriter output) {
-        output.println("-------------------------------------");
-        output.println("Current number of books borrowed: " + findBorrower(currentUser).getNumBorrowedBooks());
+        if (scanner.nextLine().equals("1")) {
+            output.println("-------------------------------------");
+            output.println("Current number of books borrowed: " + findBorrower(currentUser).getNumBorrowedBooks());
+            output.println();
+            output.println("---Collection of Books---");
+            for (Book book : books) {
+                //if book is checked out, display due date
+                if (book.getStatus().equals(BookStatus.CHECKED_OUT)) {
+                    output.println("Title: " + book.getTitle() + ", Author: " + book.getAuthor() + ", Status: CHECKED_OUT, Due: ");
+                }
+
+                else if (book.getStatus().equals(BookStatus.AVAILABLE)){
+                    output.println("Title: " + book.getTitle() + ", Author: " + book.getAuthor() + ", Status: AVAILABLE");
+                }
+
+
+                else if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().isEmpty()
+                        && book.getHoldQueue().peek().equals(currentUser)){
+                    output.println("Title: " + book.getTitle() + ", Author: " + book.getAuthor() + ", Status: AVAILABLE");
+                }
+
+                else {
+                    output.println("Title: " + book.getTitle() + ", Author: " + book.getAuthor() + ", Status: ON_HOLD");
+                }
+
+                output.flush();
+            }
+        }
     }
 
     //Getters
