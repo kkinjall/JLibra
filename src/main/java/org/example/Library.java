@@ -167,7 +167,7 @@ public class Library {
                 output.flush();
             }
 
-            if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().contains(currentUser)){
+            if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().contains(currentUser) && book.getHoldQueue().peek() != currentUser){
                 output.println("This book is currently on hold by another borrower. Would you like to place a hold? (y/n)");
                 output.flush();
             }

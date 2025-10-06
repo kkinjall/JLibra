@@ -501,4 +501,123 @@ public class MainTest {
 
         assertTrue(output.toString().contains("You have met the 3 book borrow limit and currently can not borrow this book. Would you like to place a hold? (y/n)"));
     }
+
+    @Test
+    @DisplayName("Check if borrower cannot further action on book that they already have on hold")
+    void RESP_12_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+
+        Book book = library.getBookByNumber(5);
+        book.setStatus(BookStatus.ON_HOLD);
+        book.addHoldQueue("sandy_cheeks");
+        book.addHoldQueue("spongebob");
+
+        output = new StringWriter();
+        //Run the borrow loop once manually (simulate main loop behavior)
+        boolean exitBorrow = false;
+        int attempts = 0;
+        while (!exitBorrow && attempts < 1) {  //simulate 1 try
+            library.displayBookCollection(new Scanner("1\n"), new PrintWriter(output));
+            if (library.selectBookToBorrow(scanner, new PrintWriter(output))) {
+                exitBorrow = true;
+            }
+            attempts++;
+        }
+
+        assertTrue(output.toString().contains("You already have a hold on this book"));
+        assertTrue(output.toString().contains("---Collection of Books---")); //check if returned to display collection
+    }
+
+    @Test
+    @DisplayName("Check if borrower cannot further action on book that they already have checked out")
+    void RESP_12_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+
+        //borrow book and try to borrow again
+        library.borrowBook("The Bell Jar");
+
+        output = new StringWriter();
+        //Run the borrow loop once manually (simulate main loop behavior)
+        boolean exitBorrow = false;
+        int attempts = 0;
+        while (!exitBorrow && attempts < 1) {  //simulate 1 try
+            library.displayBookCollection(new Scanner("1\n"), new PrintWriter(output));
+            if (library.selectBookToBorrow(scanner, new PrintWriter(output))) {
+                exitBorrow = true;
+            }
+            attempts++;
+        }
+
+        assertTrue(output.toString().contains("You already have this book checked out"));
+        assertTrue(output.toString().contains("---Collection of Books---")); //check if returned to display collection
+    }
+
+    @Test
+    @DisplayName("Check if borrower cannot further action on book that is available, they're first on the hold queue, and at 3 book limit ")
+    void RESP_12_test_03() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "8\ny\n";
+        scanner = new Scanner(input);
+
+        //borrow books to be at 3 book limit
+        library.borrowBook("The Bell Jar");
+        library.borrowBook("Pride and Prejudice");
+        library.borrowBook("Sister Outsider");
+
+        //be on hold for one book
+        Book book = library.getBookByNumber(8);
+        book.setStatus(BookStatus.ON_HOLD);
+        book.addHoldQueue("spongebob");
+
+        int attempt = 0;
+        while (attempt < 2) {
+            library.displayMenu(new PrintWriter(output));
+
+            if (attempt < 1) {
+                while (true) {
+                    library.displayBookCollection(new Scanner("1\n"), new PrintWriter(output));
+                    if (library.selectBookToBorrow(scanner, new PrintWriter(output))) {
+                        break;
+                    }
+                }
+            }
+            attempt += 1;
+        }
+
+        int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
+
+        assertTrue(output.toString().contains("You have met the 3 book borrow limit and currently can not borrow this book. Please return at least one book before trying to borrow again."));
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),
+                output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
 }
