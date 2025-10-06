@@ -9,6 +9,7 @@ public class Library {
     private List<Book> books;
     private List<Borrower> borrowers;
     private String currentUser;
+    private static int MAX_BOOKS = 3;
 
     //constructor
     public Library(){
@@ -100,11 +101,22 @@ public class Library {
     }
 
     public boolean borrowBook(String title){
-        return true;
+        Book book = getBookByTitle(title);
+        Borrower borrower = findBorrower(currentUser);
+
+        if (borrower.getNumBorrowedBooks() < MAX_BOOKS){
+            book.addBorrowQueue(currentUser);
+            book.setStatus(BookStatus.CHECKED_OUT);
+            borrower.addNumBorrowedBooks();
+            return true;
+        }
+
+        return false;
     }
 
     public void displayBookDetails(Scanner scanner, PrintWriter output) {
-        output.println("Current number of books borrowed: " + -1);
+        output.println("-------------------------------------");
+        output.println("Current number of books borrowed: " + findBorrower(currentUser).getNumBorrowedBooks());
     }
 
     //Getters

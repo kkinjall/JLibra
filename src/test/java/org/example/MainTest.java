@@ -278,7 +278,4 @@ public class MainTest {
         //check if count is two
         assertTrue(output.toString().contains("Current number of books borrowed: " + 2));
     }
-
-
-
 }

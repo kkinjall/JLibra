@@ -8,6 +8,7 @@ public class Book {
     private String author;
     private BookStatus status;
     private Queue<String> holdQueue;
+    private Queue<String> borrowQueue;
 
     //constructor
     public Book(String title, String author) {
@@ -15,6 +16,7 @@ public class Book {
         this.author = author;
         this.status = BookStatus.AVAILABLE;
         this.holdQueue = new LinkedList<>();
+        this.borrowQueue = new LinkedList<>();
     }
 
     public BookStatus getStatus(){
@@ -43,4 +45,7 @@ public class Book {
         holdQueue.add(username);
     }
 
+    public void addBorrowQueue(String username){
+        borrowQueue.add(username);
+    }
 }

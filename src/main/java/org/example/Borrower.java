@@ -34,4 +34,8 @@ public class Borrower {
     public List<Book> getBooksOnHold(){
         return booksOnHold;
     }
+
+    public void addNumBorrowedBooks(){
+        numBorrowedBooks += 1;
+    }
 }
