@@ -12,6 +12,8 @@ public class Book {
     private Queue<String> holdQueue;
     private Queue<String> borrowQueue;
 
+    private static int days = 14;
+
     //constructor
     public Book(String title, String author) {
         this.title = title;
@@ -50,6 +52,10 @@ public class Book {
     //setters
     public void setStatus(BookStatus newStatus){
         status = newStatus;
+    }
+
+    public void setDueDate(){
+        dueDate = LocalDate.now().plusDays(days);
     }
 
     public void addHoldQueue(String username){

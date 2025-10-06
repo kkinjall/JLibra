@@ -162,27 +162,65 @@ public class Library {
             output.flush();
             Borrower borrower = findBorrower(currentUser);
 
+            //book is checked out, current borrower hasn't checked it out, and they have less than 3 books borrowed - offer to place hold
             if (book.getStatus().equals(BookStatus.CHECKED_OUT) && !book.getBorrowQueue().contains(currentUser) && borrower.getNumBorrowedBooks() < 3){
                 output.println("This book is currently checked out. Would you like to place a hold? (y/n)");
                 output.flush();
+                if (scanner.hasNextLine() && scanner.nextLine().trim().equalsIgnoreCase("Y")){
+                    addBookOnHold(book.getTitle());
+                    output.println("You have been added to the hold queue for this book");
+                    output.flush();
+                    return false;
+                }
+                else{
+                    output.println("Hold cancelled");
+                    output.flush();
+                    return false;
+                }
             }
 
+            //book is on hold and the current borrower hasn't placed a hold on it - offer to place hold
             if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().contains(currentUser)){
                 output.println("This book is currently on hold by another borrower. Would you like to place a hold? (y/n)");
                 output.flush();
+                if (scanner.hasNextLine() && scanner.nextLine().trim().equalsIgnoreCase("Y")){
+                    addBookOnHold(book.getTitle());
+                    output.println("You have been added to the hold queue for this book");
+                    output.flush();
+                    return false;
+                }
+                else{
+                    output.println("Hold cancelled");
+                    output.flush();
+                    return false;
+                }
             }
 
+            //book is available, but current borrower has currently borrowed 3 books - offer to place hold
             if (book.getStatus().equals(BookStatus.AVAILABLE) && borrower.getNumBorrowedBooks() == 3){
                 output.println("You have met the 3 book borrow limit and currently can not borrow this book. Would you like to place a hold? (y/n)");
                 output.flush();
+                if (scanner.hasNextLine() && scanner.nextLine().trim().equalsIgnoreCase("Y")){
+                    addBookOnHold(book.getTitle());
+                    output.println("You have been added to the hold queue for this book");
+                    output.flush();
+                    return true;
+                }
+                else{
+                    output.println("Hold cancelled");
+                    output.flush();
+                    return true;
+                }
             }
 
+            //book is on hold, borrower has already placed hold, and they are not first in the hold queue - no hold or borrow
             if (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().contains(currentUser) && !book.getHoldQueue().peek().contains(currentUser)){
                 output.println("You already have a hold on this book");
                 output.flush();
                 return false;
             }
 
+            //book is checked out, and borrower has borrowed it - no hold or borrow
             if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getBorrowQueue().contains(currentUser)){
                 output.println("You already have this book checked out");
                 output.flush();
@@ -195,6 +233,10 @@ public class Library {
                 output.flush();
             }
 
+            //book is available and borrower has borrowed less than 3 books - allow borrow
+            if (book.getStatus().equals(BookStatus.AVAILABLE) && borrower.getNumBorrowedBooks() < 3){
+                book.setDueDate();
+            }
         }
         else{
             output.println("Borrowing cancelled.");
