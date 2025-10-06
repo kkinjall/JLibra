@@ -278,4 +278,90 @@ public class MainTest {
         //check if count is two
         assertTrue(output.toString().contains("Current number of books borrowed: " + 2));
     }
+
+    @Test
+    @DisplayName("Check if correct authors and titles are displayed")
+    void RESP_08_test_01(){
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        library.displayMenu(new PrintWriter(output));
+        input = "1\n";
+        scanner = new Scanner(input);
+        output.flush();
+        library.displayBookDetails(scanner, new PrintWriter(output));
+
+        //check if titles and corresponding authors are printed
+        //check for first, tenth and twentieth books
+        assertTrue(output.toString().contains("Title: A Room of One’s Own, Author: Virginia Woolf"));
+        assertTrue(output.toString().contains("Title: Beloved, Author: Toni Morrison"));
+        assertTrue(output.toString().contains("Title: Just Keep Walking, Author: Erin Soderberg"));
+    }
+
+    @Test
+    @DisplayName("Check if books of each status: Available, Checked Out and On Hold are displayed")
+    void RESP_08_test_02(){
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        //add borrower to hold queue as only borrower, and change book status to on hold
+        //this book should display as available to current borrower
+        library.addBookOnHold("Sister Outsider");
+        library.getBookByTitle("Sister Outsider").setStatus(BookStatus.ON_HOLD);
+
+        library.getBookByTitle("Persepolis").setStatus(BookStatus.ON_HOLD);
+        library.getBookByTitle("I Know Why the Caged Bird Sings").setStatus(BookStatus.CHECKED_OUT);
+
+        library.displayMenu(new PrintWriter(output));
+        input = "1\n";
+        scanner = new Scanner(input);
+        output.flush();
+        library.displayBookDetails(scanner, new PrintWriter(output));
+
+        //check if statuses are correct for a selection of books
+        assertTrue(output.toString().contains("Title: Sister Outsider, Author: Audre Lorde, Status: AVAILABLE"));
+        assertTrue(output.toString().contains("Title: Beloved, Author: Toni Morrison, Status: AVAILABLE"));
+        assertTrue(output.toString().contains("Title: Persepolis, Author: Marjane Satrapi, Status: ON_HOLD"));
+        assertTrue(output.toString().contains("Title: I Know Why the Caged Bird Sings, Author: Maya Angelou, Status: CHECKED_OUT"));
+    }
+
+    @Test
+    @DisplayName("Check if the Due date heading is printed for books that are Checked Out")
+    void RESP_08_test_03(){
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        library.getBookByTitle("Sister Outsider").setStatus(BookStatus.ON_HOLD); //due heading should not print for this book
+        library.getBookByTitle("Beloved").setStatus(BookStatus.CHECKED_OUT);
+        library.getBookByTitle("I Know Why the Caged Bird Sings").setStatus(BookStatus.CHECKED_OUT);
+
+        library.displayMenu(new PrintWriter(output));
+        input = "1\n";
+        scanner = new Scanner(input);
+        output.flush();
+        library.displayBookDetails(scanner, new PrintWriter(output));
+
+        //check if due date heading is present for a selection of books
+        assertTrue(output.toString().contains("Title: Sister Outsider, Author: Audre Lorde, Status: ON_HOLD"));
+        assertTrue(output.toString().contains("Title: Beloved, Author: Toni Morrison, Status: CHECKED_OUT, Due: "));
+        assertTrue(output.toString().contains("Title: I Know Why the Caged Bird Sings, Author: Maya Angelou, Status: CHECKED_OUT, Due: "));
+    }
 }
