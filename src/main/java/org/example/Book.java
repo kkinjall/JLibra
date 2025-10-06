@@ -35,6 +35,10 @@ public class Book {
         return holdQueue;
     }
 
+    public Queue<String> getBorrowQueue() {
+        return borrowQueue;
+    }
+
 
     //setters
     public void setStatus(BookStatus newStatus){

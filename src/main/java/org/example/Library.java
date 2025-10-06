@@ -159,9 +159,28 @@ public class Library {
         if (scanner.hasNextLine()) { confirm = scanner.nextLine().trim();}
         if (confirm.equalsIgnoreCase("Y")) {
             output.println("Borrowing transaction in progress...");
+            output.flush();
+            Borrower borrower = findBorrower(currentUser);
+
+            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && !book.getBorrowQueue().contains(currentUser) && borrower.getNumBorrowedBooks() < 3){
+                output.println("This book is currently checked out. Would you like to place a hold? (y/n)");
+                output.flush();
+            }
+
+            if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().contains(currentUser) && borrower.getNumBorrowedBooks() < 3){
+                output.println("This book is currently on hold by another borrower. Would you like to place a hold? (y/n)");
+                output.flush();
+            }
+
+            if (book.getStatus().equals(BookStatus.AVAILABLE) && borrower.getNumBorrowedBooks() == 3){
+                output.println("You have met the 3 book borrow limit and currently can not borrow this book. Would you like to place a hold? (y/n)");
+                output.flush();
+            }
+
         }
         else{
             output.println("Borrowing cancelled.");
+            output.flush();
             return false;
         }
         return true;
