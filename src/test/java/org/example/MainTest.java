@@ -232,4 +232,53 @@ public class MainTest {
         assertTrue(output.toString().contains(menu));
     }
 
+    @Test
+    @DisplayName("Check if borrow book option displays current book count = 0 when no books are borrowed ")
+    void RESP_07_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        library.displayMenu(new PrintWriter(output));
+        input = "1\n";
+        scanner = new Scanner(input);
+        output.flush();
+
+        library.displayBookDetails(scanner, new PrintWriter(output));
+        assertTrue(output.toString().contains("Current number of books borrowed: " + 0));
+    }
+
+    @Test
+    @DisplayName("Check if borrow book option displays correct current book count when books are borrowed ")
+    void RESP_07_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        //borrowed two books
+        library.borrowBook("Beloved");
+        library.borrowBook("The Yellow Library");
+
+        library.displayMenu(new PrintWriter(output));
+        input = "1\n";
+        scanner = new Scanner(input);
+        output.flush();
+
+        library.displayBookDetails(scanner, new PrintWriter(output));
+        //check if count is two
+        assertTrue(output.toString().contains("Current number of books borrowed: " + 2));
+    }
+
+
+
 }

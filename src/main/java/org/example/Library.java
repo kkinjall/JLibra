@@ -99,6 +99,13 @@ public class Library {
         return true;
     }
 
+    public boolean borrowBook(String title){
+        return true;
+    }
+
+    public void displayBookDetails(Scanner scanner, PrintWriter output) {
+        output.println("Current number of books borrowed: " + -1);
+    }
 
     //Getters
     public String getCurrentUser(){
@@ -125,6 +132,15 @@ public class Library {
         for (Book book : books) {
             if (book.getTitle().equalsIgnoreCase(title)) {
                 return book;
+            }
+        }
+        return null;
+    }
+
+    public Borrower findBorrower(String username) {
+        for (Borrower borrower : borrowers) {
+            if (borrower.getUsername().equals(username)) {
+                return borrower;
             }
         }
         return null;
