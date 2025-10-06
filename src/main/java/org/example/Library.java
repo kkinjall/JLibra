@@ -177,6 +177,24 @@ public class Library {
                 output.flush();
             }
 
+            if (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().contains(currentUser) && !book.getHoldQueue().peek().contains(currentUser)){
+                output.println("You already have a hold on this book");
+                output.flush();
+                return false;
+            }
+
+            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getBorrowQueue().contains(currentUser)){
+                output.println("You already have this book checked out");
+                output.flush();
+                return false;
+            }
+
+            //book is on hold, but current borrower has currently borrowed 3 books - no borrow or hold
+            if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().isEmpty() && book.getHoldQueue().peek().equals(currentUser) && borrower.getNumBorrowedBooks() == 3){
+                output.println("You have met the 3 book borrow limit and currently can not borrow this book. Please return at least one book before trying to borrow again.");
+                output.flush();
+            }
+
         }
         else{
             output.println("Borrowing cancelled.");
