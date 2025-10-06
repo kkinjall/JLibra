@@ -364,4 +364,23 @@ public class MainTest {
         assertTrue(output.toString().contains("Title: Beloved, Author: Toni Morrison, Status: CHECKED_OUT, Due: "));
         assertTrue(output.toString().contains("Title: I Know Why the Caged Bird Sings, Author: Maya Angelou, Status: CHECKED_OUT, Due: "));
     }
+
+    @Test
+    @DisplayName("Check if library displays correct book and borrowing details when a book is selected")
+    void RESP_09_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\n";
+        scanner = new Scanner(input);
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertTrue(output.toString().contains("You've selected The Bell Jar by Sylvia Plath. Proceed with borrowing? (y/n)"));
+    }
 }

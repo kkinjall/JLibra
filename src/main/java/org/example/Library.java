@@ -147,6 +147,10 @@ public class Library {
         }
     }
 
+    public boolean selectBookToBorrow(Scanner scanner, PrintWriter output){
+       return true;
+    }
+
     //Getters
     public String getCurrentUser(){
         return currentUser;
