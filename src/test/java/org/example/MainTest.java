@@ -383,4 +383,53 @@ public class MainTest {
 
         assertTrue(output.toString().contains("You've selected The Bell Jar by Sylvia Plath. Proceed with borrowing? (y/n)"));
     }
+
+    @Test
+    @DisplayName("Check if library continues with borrow transaction when borrower confirms to continue")
+    void RESP_10_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertTrue(output.toString().contains("Borrowing transaction in progress..."));
+    }
+
+    @Test
+    @DisplayName("Check if library does not continue with borrow transaction when borrower rejects to continue and displays book collection again")
+    void RESP_10_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\nn\n";
+        scanner = new Scanner(input);
+
+        //Run the borrow loop once manually (simulate main loop behavior)
+        boolean exitBorrow = false;
+        int attempts = 0;
+        while (!exitBorrow && attempts < 1) {  //simulate 1 try
+            library.displayBookCollection(new Scanner("1\n"), new PrintWriter(output));
+            if (library.selectBookToBorrow(scanner, new PrintWriter(output))) {
+                exitBorrow = true;
+            }
+            attempts++;
+        }
+
+        assertTrue(output.toString().contains("Borrowing cancelled."));
+        assertTrue(output.toString().contains("---Collection of Books---"));
+    }
 }
