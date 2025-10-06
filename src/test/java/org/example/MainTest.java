@@ -432,4 +432,73 @@ public class MainTest {
         assertTrue(output.toString().contains("Borrowing cancelled."));
         assertTrue(output.toString().contains("---Collection of Books---"));
     }
+
+    @Test
+    @DisplayName("Check if book is Checked Out (by another borrower) and offer to place hold")
+    void RESP_11_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+        Book book1 = library.getBookByNumber(5);
+        book1.setStatus(BookStatus.CHECKED_OUT);
+        book1.addBorrowQueue("sandy_cheeks");
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertTrue(output.toString().contains("This book is currently checked out. Would you like to place a hold? (y/n)"));
+    }
+
+    @Test
+    @DisplayName("Check if book is On Hold (by another borrower) and offer to place hold")
+    void RESP_11_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+        Book book1 = library.getBookByNumber(5);
+        book1.setStatus(BookStatus.ON_HOLD);
+        book1.addBorrowQueue("sandy_cheeks"); //books on hold are not currently checked out, but have a borrower in the hold queue
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertTrue(output.toString().contains("This book is currently on hold by another borrower. Would you like to place a hold? (y/n)"));
+    }
+
+    @Test
+    @DisplayName("Check if offer to place a hold is displayed when book is available and borrower is at 3 book borrow limit")
+    void RESP_11_test_03() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+
+        //add books to reach borrower's 3 book borrow limit
+        library.borrowBook("Beloved");
+        library.borrowBook("To the Lighthouse");
+        library.borrowBook("The Color Purple");
+
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertTrue(output.toString().contains("You have met the 3 book borrow limit and currently can not borrow this book. Would you like to place a hold? (y/n)"));
+    }
 }
