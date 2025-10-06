@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -797,4 +798,27 @@ public class MainTest {
                 output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
                 0); //check if the last occurrence has been displayed at the end
     }
+
+    @Test
+    @DisplayName("Check if due date is calculated 14 days from the current date")
+    void RESP_14_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+
+        Book book = library.getBookByNumber(5);
+        LocalDate actualDueDate = LocalDate.now().plusDays(14);
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertEquals(actualDueDate, book.getDueDate());
+    }
+
 }

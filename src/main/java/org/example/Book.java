@@ -1,5 +1,6 @@
 package org.example;
 
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -7,6 +8,7 @@ public class Book {
     private String title;
     private String author;
     private BookStatus status;
+    private LocalDate dueDate;
     private Queue<String> holdQueue;
     private Queue<String> borrowQueue;
 
@@ -15,6 +17,7 @@ public class Book {
         this.title = title;
         this.author = author;
         this.status = BookStatus.AVAILABLE;
+        this.dueDate = null;
         this.holdQueue = new LinkedList<>();
         this.borrowQueue = new LinkedList<>();
     }
@@ -29,6 +32,10 @@ public class Book {
 
     public String getAuthor(){
         return author;
+    }
+
+    public LocalDate getDueDate(){
+        return dueDate;
     }
 
     public Queue<String> getHoldQueue() {
