@@ -42,7 +42,7 @@ public class Main {
 
                     //Return book
                     case "2":
-                        library.returnBook(new Scanner("2\n" + scanner), output);
+                        library.returnBook(scanner, output);
                         break;
                 }
             }

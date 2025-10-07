@@ -262,7 +262,6 @@ public class Library {
     }
 
     public boolean returnBook(Scanner scanner, PrintWriter output){
-        if (scanner.nextLine().equals("2")) {
             output.println("-------------------------");
             Borrower borrower = findBorrower(currentUser);
 
@@ -280,12 +279,12 @@ public class Library {
                 Book b = borrowedBooks.get(i);
                 output.println((i + 1) + ". " + b.getTitle() + " by " + b.getAuthor() + " - Due: " + b.getDueDate());
             }
+            output.println("Which book would you like to return? (Enter number): ");
             output.flush();
 
             if (scanner.hasNextInt()) {
                 int choice = scanner.nextInt();
                 Book bookToReturn = borrowedBooks.get(choice - 1);
-                System.out.println(bookToReturn);
 
                 //check for pending holds
                 if (!bookToReturn.getHoldQueue().isEmpty()) {
@@ -299,7 +298,6 @@ public class Library {
                 bookToReturn.setCurrentBorrower(null); //clear current borrower
                 borrower.decreaseNumBorrowedBooks(); //decrease number of books borrowed
             }
-        }
         return true;
     }
 

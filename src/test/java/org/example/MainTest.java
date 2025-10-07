@@ -992,7 +992,7 @@ public class MainTest {
         //borrower2 places a hold on the same book
         book.addHoldQueue(borrower2.getUsername());
 
-        input = "2\n1\n";
+        input = "1\n";
         scanner = new Scanner(input);
         output.flush();
         library.returnBook(scanner, new PrintWriter(output));
@@ -1019,7 +1019,7 @@ public class MainTest {
         Book book = library.getBookByNumber(1);
         library.borrowBook(book.getTitle());
 
-        input = "2\n1\n";
+        input = "1\n";
         scanner = new Scanner(input);
         output.flush();
         library.returnBook(scanner, new PrintWriter(output));
@@ -1028,5 +1028,5 @@ public class MainTest {
         assertFalse(borrower.getBorrowedBooks().contains(book)); //book removed from original borrower's account
         assertEquals(0, borrower.getNumBorrowedBooks()); //number of borrowed books decreased from original borrower's account
     }
-    
+
 }
