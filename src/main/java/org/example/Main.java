@@ -44,6 +44,14 @@ public class Main {
                     case "2":
                         library.returnBook(scanner, output);
                         break;
+
+                    //Logout
+                    case "3":
+                        boolean loggedOut = library.logout(scanner, output);
+                        if (loggedOut) {
+                            inMenu = false; //exit menu loop
+                        }
+                        break;
                 }
             }
         }

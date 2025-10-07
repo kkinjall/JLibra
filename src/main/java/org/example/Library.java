@@ -312,6 +312,22 @@ public class Library {
     }
 
     public boolean logout(Scanner scanner, PrintWriter output) {
+        output.println("Are you sure you want to logout? (y/n)");
+        output.flush();
+
+        if (scanner.hasNextLine()) {
+            String confirm = scanner.nextLine().trim();
+            if (confirm.equalsIgnoreCase("Y")) {
+                currentUser = null; //clear current session
+                output.println("You have successfully logged out.");
+                output.flush();
+                return true;
+            }
+            else {
+                output.println("Logout cancelled.");
+                output.flush();
+            }
+        }
         return false;
     }
 
