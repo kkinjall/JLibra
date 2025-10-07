@@ -970,4 +970,63 @@ public class MainTest {
         assertTrue(output.toString().contains("1. Beloved by Toni Morrison - Due: " + date));
         assertTrue(output.toString().contains("2. Jane Eyre by Charlotte Brontë - Due: " + date));
     }
+
+    @Test
+    @DisplayName("Check to update book and current borrower when book with pending holds is returned")
+    void RESP_19_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        Borrower borrower1 = library.findBorrower("spongebob");
+        Borrower borrower2 = library.findBorrower("sandy_cheeks");
+        Book book = library.getBookByNumber(1);
+
+        //borrower1 borrows the book first
+        library.borrowBook(book.getTitle());
+        //borrower2 places a hold on the same book
+        book.addHoldQueue(borrower2.getUsername());
+
+        input = "2\n1\n";
+        scanner = new Scanner(input);
+        output.flush();
+        library.returnBook(scanner, new PrintWriter(output));
+
+        assertEquals(BookStatus.ON_HOLD, book.getStatus()); //book status updated to on hold
+        assertFalse(borrower1.getBorrowedBooks().contains(book)); //book removed from original borrower's account
+        assertEquals(0, borrower1.getNumBorrowedBooks()); //number of borrowed books decreased from original borrower's account
+        assertEquals(borrower2.getUsername(), book.getHoldQueue().peek()); //borrower2 is first in line in the book's hold queue
+    }
+
+    @Test
+    @DisplayName("Check to update book and current borrower when book has no pending holds")
+    void RESP_19_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        Borrower borrower = library.findBorrower("spongebob");
+        Book book = library.getBookByNumber(1);
+        library.borrowBook(book.getTitle());
+
+        input = "2\n1\n";
+        scanner = new Scanner(input);
+        output.flush();
+        library.returnBook(scanner, new PrintWriter(output));
+
+        assertEquals(BookStatus.AVAILABLE, book.getStatus()); //book status updated to on hold
+        assertFalse(borrower.getBorrowedBooks().contains(book)); //book removed from original borrower's account
+        assertEquals(0, borrower.getNumBorrowedBooks()); //number of borrowed books decreased from original borrower's account
+    }
+    
 }
