@@ -823,4 +823,29 @@ public class MainTest {
         assertEquals(actualDueDate, book.getDueDate());
     }
 
+    @Test
+    @DisplayName("Check if borrow transaction is recorded, update book and borrower account")
+    void RESP_15_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+
+        Book book = library.getBookByNumber(5);
+        Borrower borrower = library.findBorrower("spongebob");
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertEquals(borrower, book.getCurrentBorrower()); //check if borrower is set as book's borrower
+        assertTrue(borrower.getBorrowedBooks().contains(book)); //check if book is added to borrower's borrowed list
+        assertEquals(BookStatus.CHECKED_OUT, book.getStatus()); //check if book status is checked out
+        assertTrue(borrower.getBorrowedBooks().contains(book)); //check if borrower's number of books has increased
+    }
+
 }

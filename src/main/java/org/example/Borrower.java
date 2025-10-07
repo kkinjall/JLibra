@@ -10,6 +10,7 @@ public class Borrower {
     private String password;
     private int numBorrowedBooks;
     private List<Book> booksOnHold;
+    private List<Book> borrowedBooks;
 
     //constructor
     public Borrower(String username, String password) {
@@ -17,6 +18,7 @@ public class Borrower {
         this.password = password;
         this.numBorrowedBooks = 0;
         this.booksOnHold = new ArrayList<>();
+        this.borrowedBooks = new ArrayList<>();
     }
 
     public String getUsername(){
@@ -37,5 +39,9 @@ public class Borrower {
 
     public void addNumBorrowedBooks(){
         numBorrowedBooks += 1;
+    }
+
+    public List<Book> getBorrowedBooks(){
+        return borrowedBooks;
     }
 }
