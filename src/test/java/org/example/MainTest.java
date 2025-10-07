@@ -1029,4 +1029,46 @@ public class MainTest {
         assertEquals(0, borrower.getNumBorrowedBooks()); //number of borrowed books decreased from original borrower's account
     }
 
+    @Test
+    @DisplayName("Check if return confirmation is provided, acknowledged, and main menu displayed")
+    void RESP_20_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        Borrower borrower = library.findBorrower("spongebob");
+        Book book = library.getBookByNumber(1);
+        library.borrowBook(book.getTitle());
+
+        input = "1\n\n";
+        scanner = new Scanner(input);
+        output.flush();
+        int attempt = 0;
+        while (attempt < 2) {
+            library.displayMenu(new PrintWriter(output));
+
+            if (attempt < 1) {
+                while (true) {
+                    if (library.returnBook(scanner, new PrintWriter(output))) {
+                        break;
+                    }
+                }
+            }
+            attempt += 1;
+        }
+        int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
+
+        System.out.println(output.toString());
+        assertTrue(output.toString().contains("You have successfully returned " + book.getTitle() + ". Hit Enter to continue: "));
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),
+                output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
+                0); //check if the last occurrence has been displayed at the end    }
+    }
+
 }
