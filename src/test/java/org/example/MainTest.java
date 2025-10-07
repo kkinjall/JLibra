@@ -871,4 +871,44 @@ public class MainTest {
         assertTrue(output.toString().contains("You have successfully borrowed " + book.getTitle() + ". Due date is " + date));
     }
 
+    @Test
+    @DisplayName("Check if main menu is displayed when completion confirmed by borrower")
+    void RESP_17_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n\n";
+        scanner = new Scanner(input);
+        output = new StringWriter();
+
+        int attempt = 0;
+        while (attempt < 2) {
+            library.displayMenu(new PrintWriter(output));
+
+            if (attempt < 1) {
+                while (true) {
+                    library.displayBookCollection(new Scanner("1\n"), new PrintWriter(output));
+                    if (library.selectBookToBorrow(scanner, new PrintWriter(output))) {
+                        break;
+                    }
+                }
+                scanner = new Scanner(input);
+            }
+            attempt += 1;
+        }
+
+        int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
+        System.out.println(output.toString());
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),
+                output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
+
 }
