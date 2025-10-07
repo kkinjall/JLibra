@@ -239,7 +239,15 @@ public class Library {
                 book.setDueDate();
                 borrowBook(book.getTitle());
                 output.println("You have successfully borrowed " + book.getTitle() + ". Due date is " + book.getDueDate());
-                return true;
+                output.println("To acknowledge completion, hit Enter: ");
+                output.flush();
+
+                while (true) {
+                    //user entered next line as confirmation, return to main menu
+                    if (scanner.nextLine().trim().isEmpty()) {
+                        return true;
+                    }
+                }
             }
         }
         else{
