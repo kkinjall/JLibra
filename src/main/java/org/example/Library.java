@@ -281,8 +281,25 @@ public class Library {
                 output.println((i + 1) + ". " + b.getTitle() + " by " + b.getAuthor() + " - Due: " + b.getDueDate());
             }
             output.flush();
-        }
 
+            if (scanner.hasNextInt()) {
+                int choice = scanner.nextInt();
+                Book bookToReturn = borrowedBooks.get(choice - 1);
+                System.out.println(bookToReturn);
+
+                //check for pending holds
+                if (!bookToReturn.getHoldQueue().isEmpty()) {
+                    bookToReturn.setStatus(BookStatus.ON_HOLD);
+                }
+                else {
+                    bookToReturn.setStatus(BookStatus.AVAILABLE);
+                }
+
+                borrower.removeBorrowedBook(bookToReturn); //remove book from original borrower account
+                bookToReturn.setCurrentBorrower(null); //clear current borrower
+                borrower.decreaseNumBorrowedBooks(); //decrease number of books borrowed
+            }
+        }
         return true;
     }
 

@@ -38,6 +38,10 @@ public class Borrower {
         return booksOnHold;
     }
 
+    public List<Book> getBorrowedBooks(){
+        return borrowedBooks;
+    }
+
     public void addNumBorrowedBooks(){
         numBorrowedBooks += 1;
     }
@@ -46,7 +50,13 @@ public class Borrower {
         borrowedBooks.add(book);
     }
 
-    public List<Book> getBorrowedBooks(){
-        return borrowedBooks;
+    public void removeBorrowedBook(Book book){
+        borrowedBooks.remove(book);
+    }
+
+    public void decreaseNumBorrowedBooks(){
+        if (numBorrowedBooks > 0){
+            numBorrowedBooks -= 1;
+        }
     }
 }
