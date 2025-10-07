@@ -297,6 +297,16 @@ public class Library {
                 borrower.removeBorrowedBook(bookToReturn); //remove book from original borrower account
                 bookToReturn.setCurrentBorrower(null); //clear current borrower
                 borrower.decreaseNumBorrowedBooks(); //decrease number of books borrowed
+
+                output.println("You have successfully returned " + bookToReturn.getTitle() + ". Hit Enter to continue: ");
+                output.flush();
+
+                while (true) {
+                    //user entered next line as confirmation, return to main menu
+                    if (scanner.nextLine().trim().isEmpty()) {
+                        return true;
+                    }
+                }
             }
         return true;
     }
