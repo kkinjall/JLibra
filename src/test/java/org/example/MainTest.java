@@ -448,9 +448,10 @@ public class MainTest {
 
         input = "5\ny\n";
         scanner = new Scanner(input);
+        Borrower borrower = library.findBorrower("sandy_cheeks");
         Book book1 = library.getBookByNumber(5);
         book1.setStatus(BookStatus.CHECKED_OUT);
-        book1.addBorrowQueue("sandy_cheeks");
+        book1.setCurrentBorrower(borrower);
         library.selectBookToBorrow(scanner, new PrintWriter(output));
 
         assertTrue(output.toString().contains("This book is currently checked out. Would you like to place a hold? (y/n)"));
@@ -470,9 +471,10 @@ public class MainTest {
 
         input = "5\ny\n";
         scanner = new Scanner(input);
+        Borrower borrower = library.findBorrower("sandy_cheeks");
         Book book1 = library.getBookByNumber(5);
         book1.setStatus(BookStatus.ON_HOLD);
-        book1.addBorrowQueue("sandy_cheeks"); //books on hold are not currently checked out, but have a borrower in the hold queue
+        book1.setCurrentBorrower(borrower); //books on hold are not currently checked out, but have a borrower in the hold queue
         library.selectBookToBorrow(scanner, new PrintWriter(output));
 
         assertTrue(output.toString().contains("This book is currently on hold by another borrower. Would you like to place a hold? (y/n)"));

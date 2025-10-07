@@ -105,7 +105,7 @@ public class Library {
         Borrower borrower = findBorrower(currentUser);
 
         if (borrower.getNumBorrowedBooks() < MAX_BOOKS){
-            book.addBorrowQueue(currentUser);
+            book.setCurrentBorrower(borrower);
             book.setStatus(BookStatus.CHECKED_OUT);
             borrower.addNumBorrowedBooks();
             return true;
@@ -163,7 +163,7 @@ public class Library {
             Borrower borrower = findBorrower(currentUser);
 
             //book is checked out, current borrower hasn't checked it out, and they have less than 3 books borrowed - offer to place hold
-            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && !book.getBorrowQueue().contains(currentUser) && borrower.getNumBorrowedBooks() < 3){
+            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getCurrentBorrower() != borrower && borrower.getNumBorrowedBooks() < 3){
                 output.println("This book is currently checked out. Would you like to place a hold? (y/n)");
                 output.flush();
                 if (scanner.hasNextLine() && scanner.nextLine().trim().equalsIgnoreCase("Y")){
@@ -221,7 +221,7 @@ public class Library {
             }
 
             //book is checked out, and borrower has borrowed it - no hold or borrow
-            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getBorrowQueue().contains(currentUser)){
+            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getCurrentBorrower() == borrower){
                 output.println("You already have this book checked out");
                 output.flush();
                 return false;

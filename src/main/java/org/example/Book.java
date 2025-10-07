@@ -10,7 +10,7 @@ public class Book {
     private BookStatus status;
     private LocalDate dueDate;
     private Queue<String> holdQueue;
-    private Queue<String> borrowQueue;
+    private Borrower currentBorrower;
 
     private static int days = 14;
 
@@ -21,7 +21,7 @@ public class Book {
         this.status = BookStatus.AVAILABLE;
         this.dueDate = null;
         this.holdQueue = new LinkedList<>();
-        this.borrowQueue = new LinkedList<>();
+        this.currentBorrower = null;
     }
 
     public BookStatus getStatus(){
@@ -44,8 +44,8 @@ public class Book {
         return holdQueue;
     }
 
-    public Queue<String> getBorrowQueue() {
-        return borrowQueue;
+    public Borrower getCurrentBorrower() {
+        return currentBorrower;
     }
 
 
@@ -62,7 +62,7 @@ public class Book {
         holdQueue.add(username);
     }
 
-    public void addBorrowQueue(String username){
-        borrowQueue.add(username);
+    public void setCurrentBorrower(Borrower borrower){
+        currentBorrower = borrower;
     }
 }
