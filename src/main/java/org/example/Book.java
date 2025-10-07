@@ -65,4 +65,8 @@ public class Book {
     public void setCurrentBorrower(Borrower borrower){
         currentBorrower = borrower;
     }
+
+    public void removeBorrowerHoldQueue(String username){
+        holdQueue.remove(username);
+    }
 }

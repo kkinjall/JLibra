@@ -813,12 +813,9 @@ public class MainTest {
         library.authenticateUser(scanner, new PrintWriter(output));
         output.flush();
 
-        input = "5\ny\n\n";
-        scanner = new Scanner(input);
-
         Book book = library.getBookByNumber(5);
         LocalDate actualDueDate = LocalDate.now().plusDays(14);
-        library.selectBookToBorrow(scanner, new PrintWriter(output));
+        book.setDueDate();
 
         assertEquals(actualDueDate, book.getDueDate());
     }
@@ -864,7 +861,6 @@ public class MainTest {
         scanner = new Scanner(input);
 
         Book book = library.getBookByNumber(5);
-        Borrower borrower = library.findBorrower("spongebob");
         LocalDate date = LocalDate.now().plusDays(14);
         library.selectBookToBorrow(scanner, new PrintWriter(output));
 
@@ -904,7 +900,6 @@ public class MainTest {
         }
 
         int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
-        System.out.println(output.toString());
         assertTrue(lastIndex > 0); //check if it's been displayed
         assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),
                 output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),

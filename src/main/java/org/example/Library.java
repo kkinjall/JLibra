@@ -105,6 +105,7 @@ public class Library {
         Borrower borrower = findBorrower(currentUser);
 
         if (borrower.getNumBorrowedBooks() < MAX_BOOKS){
+            book.setDueDate();
             book.setCurrentBorrower(borrower);
             book.setStatus(BookStatus.CHECKED_OUT);
             borrower.addNumBorrowedBooks();
@@ -235,9 +236,11 @@ public class Library {
             }
 
             //book is available and borrower has borrowed less than 3 books - allow borrow
-            if ((book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.ON_HOLD)) && borrower.getNumBorrowedBooks() < 3){
-                book.setDueDate();
+            if ((book.getStatus().equals(BookStatus.AVAILABLE) || (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().peek().equals(currentUser))) && borrower.getNumBorrowedBooks() < 3){
                 borrowBook(book.getTitle());
+                if (book.getHoldQueue().contains(getCurrentUser())){
+                    book.removeBorrowerHoldQueue(getCurrentUser());
+                }
                 output.println("You have successfully borrowed " + book.getTitle() + ". Due date is " + book.getDueDate());
                 output.println("To acknowledge completion, hit Enter: ");
                 output.flush();
