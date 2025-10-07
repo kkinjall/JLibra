@@ -397,7 +397,7 @@ public class MainTest {
         library.authenticateUser(scanner, new PrintWriter(output));
         output.flush();
 
-        input = "5\ny\n";
+        input = "5\ny\n\n";
         scanner = new Scanner(input);
         library.selectBookToBorrow(scanner, new PrintWriter(output));
 
@@ -813,7 +813,7 @@ public class MainTest {
         library.authenticateUser(scanner, new PrintWriter(output));
         output.flush();
 
-        input = "5\ny\n";
+        input = "5\ny\n\n";
         scanner = new Scanner(input);
 
         Book book = library.getBookByNumber(5);
@@ -835,7 +835,7 @@ public class MainTest {
         library.authenticateUser(scanner, new PrintWriter(output));
         output.flush();
 
-        input = "5\ny\n";
+        input = "5\ny\n\n";
         scanner = new Scanner(input);
 
         Book book = library.getBookByNumber(5);
@@ -860,7 +860,7 @@ public class MainTest {
         library.authenticateUser(scanner, new PrintWriter(output));
         output.flush();
 
-        input = "5\ny\n";
+        input = "5\ny\n\n";
         scanner = new Scanner(input);
 
         Book book = library.getBookByNumber(5);
