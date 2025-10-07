@@ -235,7 +235,7 @@ public class Library {
             }
 
             //book is available and borrower has borrowed less than 3 books - allow borrow
-            if (book.getStatus().equals(BookStatus.AVAILABLE) && borrower.getNumBorrowedBooks() < 3){
+            if ((book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.ON_HOLD)) && borrower.getNumBorrowedBooks() < 3){
                 book.setDueDate();
                 borrowBook(book.getTitle());
             }

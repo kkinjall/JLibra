@@ -848,4 +848,27 @@ public class MainTest {
         assertTrue(borrower.getBorrowedBooks().contains(book)); //check if borrower's number of books has increased
     }
 
+    @Test
+    @DisplayName("Check if confirmation message displayed with due date when a book is successfully borrowed")
+    void RESP_16_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "5\ny\n";
+        scanner = new Scanner(input);
+
+        Book book = library.getBookByNumber(5);
+        Borrower borrower = library.findBorrower("spongebob");
+        LocalDate date = LocalDate.now().plusDays(14);
+        library.selectBookToBorrow(scanner, new PrintWriter(output));
+
+        assertTrue(output.toString().contains("You have successfully borrowed " + book.getTitle() + ". Due date is " + date));
+    }
+
 }
