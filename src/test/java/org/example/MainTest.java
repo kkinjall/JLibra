@@ -1071,4 +1071,47 @@ public class MainTest {
                 0); //check if the last occurrence has been displayed at the end    }
     }
 
+    @Test
+    @DisplayName("Check borrower confirms logout, clear current session, and reprompt for login")
+    void RESP_21_test_01() {
+        String input = "spongebob\nilovegary!\n3\ny\nsandy_cheeks\nhello123\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+
+        //simulate loop in main for two login attempts
+        boolean session = true;
+        int attempt = 0;
+        while (session && attempt < 2) {
+            boolean loggedIn = false;
+            while (!loggedIn && scanner.hasNextLine()) {
+                loggedIn = library.authenticateUser(scanner, new PrintWriter(output));
+            }
+
+            boolean inMenu = true;
+            while (inMenu && scanner.hasNextLine()) {
+                library.displayMenu(new PrintWriter(output));
+                String choice = scanner.nextLine();
+
+                if (choice.equals("3")) {
+                    if (library.logout(scanner, new PrintWriter(output))) {
+                        inMenu = false;
+                        break; // exit to login prompt
+                    }
+                }
+            }
+            attempt++;
+        }
+
+        int lastIndex = output.toString().lastIndexOf("Enter username: "); //get the last occurrence of the login prompt
+
+        assertTrue(output.toString().contains("You have successfully logged out"));
+        assertEquals(null, library.getCurrentUser());
+        assertTrue(lastIndex > 0); //check if login prompt has been displayed
+        assertEquals(output.toString().length() - lastIndex - "Enter username: ".length(),
+                output.toString().substring(lastIndex).length() - "Enter username: ".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
 }

@@ -311,6 +311,10 @@ public class Library {
         return true;
     }
 
+    public boolean logout(Scanner scanner, PrintWriter output) {
+        return false;
+    }
+
     //Getters
     public String getCurrentUser(){
         return currentUser;
