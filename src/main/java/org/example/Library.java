@@ -261,6 +261,10 @@ public class Library {
         return true;
     }
 
+    public boolean returnBook(Scanner scanner, PrintWriter output){
+        return true;
+    }
+
     //Getters
     public String getCurrentUser(){
         return currentUser;

@@ -906,4 +906,68 @@ public class MainTest {
                 0); //check if the last occurrence has been displayed at the end
     }
 
+    @Test
+    @DisplayName("Check to display message if borrower has no books borrowed and display main menu")
+    void RESP_18_test_01() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        input = "2\n";
+        scanner = new Scanner(input);
+        output.flush();
+        int attempt = 0;
+        while (attempt < 2) {
+            library.displayMenu(new PrintWriter(output));
+
+            if (attempt < 1) {
+                while (true) {
+                    if (library.returnBook(scanner, new PrintWriter(output))) {
+                        break;
+                    }
+                }
+            }
+            attempt += 1;
+        }
+        int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
+
+        assertTrue(output.toString().contains("You have no books currently borrowed."));
+        assertTrue(lastIndex > 0); //check if it's been displayed
+        assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),
+                output.toString().substring(lastIndex).length() - "--- Library Menu ---".length(),
+                0); //check if the last occurrence has been displayed at the end
+    }
+
+    @Test
+    @DisplayName("Check to display borrower's borrowed books with due dates")
+    void RESP_18_test_02() {
+        String input = "spongebob\nilovegary!\n";
+        Scanner scanner = new Scanner(input);
+        StringWriter output = new StringWriter();
+        Library library = new Library();
+
+        library.initializeLibrary();
+        library.authenticateUser(scanner, new PrintWriter(output));
+        output.flush();
+
+        //borrow books
+        library.borrowBook("Beloved");
+        library.borrowBook("Jane Eyre");
+
+        LocalDate date = LocalDate.now().plusDays(14);
+
+        input = "2\n";
+        scanner = new Scanner(input);
+        output.flush();
+        library.returnBook(scanner, new PrintWriter(output));
+
+        assertTrue(output.toString().contains("Your borrowed books:"));
+        assertTrue(output.toString().contains("1. Beloved by Toni Morrison - Due: " + date));
+        assertTrue(output.toString().contains("2. Jane Eyre by Charlotte Brontë - Due: " + date));
+    }
 }
