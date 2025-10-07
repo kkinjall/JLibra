@@ -41,7 +41,7 @@ public class Library {
         books.add(new Book("Persepolis", "Marjane Satrapi"));
         books.add(new Book("The Handmaid’s Tale", "Margaret Atwood"));
         books.add(new Book("The Bloody Chamber", "Angela Carter"));
-        books.add(new Book("We Should All Be Feminists", "Chimamanda Ngozi Adichie"));
+        books.add(new Book("The Great Gatsby", "F. Scott Fitzgerald"));
         books.add(new Book("The Yellow Library", "Charlotte Perkins Gilman"));
         books.add(new Book("The Awakening", "Kate Chopin"));
         books.add(new Book("I Know Why the Caged Bird Sings", "Maya Angelou"));
