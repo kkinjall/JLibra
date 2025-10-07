@@ -262,6 +262,27 @@ public class Library {
     }
 
     public boolean returnBook(Scanner scanner, PrintWriter output){
+        if (scanner.nextLine().equals("2")) {
+            output.println("-------------------------");
+            Borrower borrower = findBorrower(currentUser);
+
+            //check if borrower has any borrowed books
+            if (borrower.getNumBorrowedBooks() == 0) {
+                output.println("You have no books currently borrowed.");
+                output.flush();
+                return true; // return to menu
+            }
+
+            //display borrowed books
+            output.println("Your borrowed books:");
+            List<Book> borrowedBooks = borrower.getBorrowedBooks();
+            for (int i = 0; i < borrowedBooks.size(); i++) {
+                Book b = borrowedBooks.get(i);
+                output.println((i + 1) + ". " + b.getTitle() + " by " + b.getAuthor() + " - Due: " + b.getDueDate());
+            }
+            output.flush();
+        }
+
         return true;
     }
 

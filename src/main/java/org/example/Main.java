@@ -30,6 +30,7 @@ public class Main {
                 String choice = scanner.nextLine();
 
                 switch (choice) {
+                    //Borrow book
                     case "1":
                         while (true){
                             library.displayBookCollection(new Scanner("1\n"), output);
@@ -37,6 +38,11 @@ public class Main {
                                 break;
                             }
                         }
+                        break;
+
+                    //Return book
+                    case "2":
+                        library.returnBook(new Scanner("2\n" + scanner), output);
                         break;
                 }
             }
