@@ -238,6 +238,8 @@ public class Library {
             if ((book.getStatus().equals(BookStatus.AVAILABLE) || book.getStatus().equals(BookStatus.ON_HOLD)) && borrower.getNumBorrowedBooks() < 3){
                 book.setDueDate();
                 borrowBook(book.getTitle());
+                output.println("You have successfully borrowed " + book.getTitle() + ". Due date is " + book.getDueDate());
+                return true;
             }
         }
         else{
