@@ -108,6 +108,7 @@ public class Library {
             book.setCurrentBorrower(borrower);
             book.setStatus(BookStatus.CHECKED_OUT);
             borrower.addNumBorrowedBooks();
+            borrower.addBorrowedBook(book);
             return true;
         }
 
@@ -236,6 +237,7 @@ public class Library {
             //book is available and borrower has borrowed less than 3 books - allow borrow
             if (book.getStatus().equals(BookStatus.AVAILABLE) && borrower.getNumBorrowedBooks() < 3){
                 book.setDueDate();
+                borrowBook(book.getTitle());
             }
         }
         else{

@@ -12,6 +12,7 @@ public class Borrower {
     private List<Book> booksOnHold;
     private List<Book> borrowedBooks;
 
+
     //constructor
     public Borrower(String username, String password) {
         this.username = username;
@@ -39,6 +40,10 @@ public class Borrower {
 
     public void addNumBorrowedBooks(){
         numBorrowedBooks += 1;
+    }
+
+    public void addBorrowedBook(Book book){
+        borrowedBooks.add(book);
     }
 
     public List<Book> getBorrowedBooks(){
