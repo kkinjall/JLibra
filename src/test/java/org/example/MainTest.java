@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -229,7 +228,6 @@ public class MainTest {
                 "2. Return a book\n" +
                 "3. Logout\n" +
                 "Enter choice (1-3): ";
-
         assertTrue(output.toString().contains(menu));
     }
 
@@ -1063,7 +1061,6 @@ public class MainTest {
         }
         int lastIndex = output.toString().lastIndexOf("--- Library Menu ---"); //get the last occurrence of the menu
 
-        System.out.println(output.toString());
         assertTrue(output.toString().contains("You have successfully returned " + book.getTitle() + ". Hit Enter to continue: "));
         assertTrue(lastIndex > 0); //check if it's been displayed
         assertEquals(output.toString().length() - lastIndex - "--- Library Menu ---".length(),

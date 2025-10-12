@@ -126,7 +126,7 @@ public class Library {
             for (Book book : books) {
                 //if book is checked out, display due date
                 if (book.getStatus().equals(BookStatus.CHECKED_OUT)) {
-                    output.println(count + ". Title: " + book.getTitle() + ", Author: " + book.getAuthor() + ", Status: CHECKED_OUT, Due: ");
+                    output.println(count + ". Title: " + book.getTitle() + ", Author: " + book.getAuthor() + ", Status: CHECKED_OUT, Due: " + book.getDueDate());
                 }
 
                 else if (book.getStatus().equals(BookStatus.AVAILABLE)){
