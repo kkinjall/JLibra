@@ -42,6 +42,10 @@ public class Borrower {
         borrowedBooks.add(book);
     }
 
+    public boolean atBorrowLimit(){
+        return numBorrowedBooks == 3;
+    }
+
     public void removeBorrowedBook(Book book){
         borrowedBooks.remove(book);
     }

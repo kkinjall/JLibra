@@ -49,6 +49,36 @@ public class Library {
         books.add(new Book("Just Keep Walking", "Erin Soderberg"));
     }
 
+    public void initializeTestLibrary() {
+        books.clear();
+        borrowers.clear();
+
+        borrowers.add(new Borrower("alice", "pass123!"));
+        borrowers.add(new Borrower("bob", "pass456"));
+        borrowers.add(new Borrower("charlie", "pass789"));
+
+        books.add(new Book("The Great Gatsby", "F. Scott Fitzgerald"));
+        books.add(new Book("To Kill a Mockingbird", "Harper Lee"));
+        books.add(new Book("1984", "George Orwell"));
+        books.add(new Book("Pride and Prejudice", "Jane Austen"));
+        books.add(new Book("The Hobbit", "J.R.R. Tolkien"));
+        books.add(new Book("Harry Potter", "J.K. Rowling"));
+        books.add(new Book("The Catcher in the Rye", "J.D. Salinger"));
+        books.add(new Book("Animal Farm", "George Orwell"));
+        books.add(new Book("Lord of the Flies", "William Golding"));
+        books.add(new Book("Jane Eyre", "Charlotte Brontë"));
+        books.add(new Book("Wuthering Heights", "Emily Brontë"));
+        books.add(new Book("Moby Dick", "Herman Melville"));
+        books.add(new Book("The Odyssey", "Homer"));
+        books.add(new Book("Hamlet", "William Shakespeare"));
+        books.add(new Book("War and Peace", "Leo Tolstoy"));
+        books.add(new Book("The Divine Comedy", "Dante Alighieri"));
+        books.add(new Book("Crime and Punishment", "Fyodor Dostoevsky"));
+        books.add(new Book("Don Quixote", "Miguel de Cervantes"));
+        books.add(new Book("The Iliad", "Homer"));
+        books.add(new Book("Ulysses", "James Joyce"));
+    }
+
     public boolean authenticateUser(Scanner input, PrintWriter output){
         output.print("Enter username: ");
         output.flush();
@@ -57,32 +87,49 @@ public class Library {
         output.flush();
         String password = input.nextLine();
 
-        //for all borrowers, if the username or password entered matches any of theirs authentication is successful
-        for (Borrower borrower: borrowers){
-            if (borrower.getUsername().equals(username) && borrower.getPassword().equals(password)) {
-                currentUser = borrower.getUsername();
-                output.println("Authentication successful!");
-                output.flush();
-                return true;
-            }
+        if (confirmLogin(username, password)){
+            output.println("Authentication successful");
+            output.flush();
+            return true;
         }
         output.println("Authentication unsuccessful");
         output.flush();
         return false;
     }
 
-    public void notifyOfAvailableBooks(PrintWriter out){
-        if (currentUser == null) return;
-
-        for (Book book : getBooks()) {
-            //if book is available and the book's hold queue has the borrower next in line...
-            //print notification
-            if (!book.getHoldQueue().isEmpty()) {
-                if (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().peek().equals(currentUser)) {
-                    out.println("Book: " + book.getTitle() + ", previously on hold is now available");
-                }
+    public boolean confirmLogin(String username, String password) {
+        //for all borrowers, if the username or password entered matches any of theirs authentication is successful
+        for (Borrower borrower : borrowers) {
+            if (borrower.getUsername().equals(username) && borrower.getPassword().equals(password)) {
+                currentUser = borrower.getUsername();
+                return true;
             }
         }
+        return false;
+    }
+
+    public List<Book> getAvailableBooksForNotification(String user) {
+        List<Book> availableBooks = new ArrayList<>();
+
+        for (Book book : getBooks()) {
+            if (!book.getHoldQueue().isEmpty() && (book.getStatus() == BookStatus.ON_HOLD && book.getHoldQueue().peek().equals(user))) {
+                    availableBooks.add(book);
+                }
+            }
+        return availableBooks;
+    }
+
+    public List<String> notifyOfAvailableBooks(PrintWriter out) {
+        if (currentUser == null) return new ArrayList<>();
+
+        List<String> notifications = new ArrayList<>();
+        for (Book book : getAvailableBooksForNotification(currentUser)) {
+            if (findBorrower(getCurrentUser()).getNumBorrowedBooks() < 3 && !findBorrower(getCurrentUser()).getBorrowedBooks().contains(book)){
+                out.println("Book: " + book.getTitle() + ", previously on hold is now available");
+                notifications.add("Book: " + book.getTitle() + ", previously on hold is now available");
+            }
+        }
+        return notifications;
     }
 
     public void displayMenu(PrintWriter output){
@@ -149,116 +196,126 @@ public class Library {
         }
     }
 
-    public boolean selectBookToBorrow(Scanner scanner, PrintWriter output){
+
+    public boolean selectBookToBorrow(Scanner scanner, PrintWriter output) {
         output.println();
         output.println("Enter the number of the book you would like to borrow: ");
-        Book book = getBookByNumber(Integer.parseInt(scanner.nextLine())); //find book by number
+        Book book = getBookByNumber(Integer.parseInt(scanner.nextLine()));
 
-        //print book details and confirmation
         output.println("You've selected " + book.getTitle() + " by " + book.getAuthor() + ". Proceed with borrowing? (y/n)");
+        String confirm = scanner.nextLine().trim();
 
-        String confirm = "";
-        if (scanner.hasNextLine()) { confirm = scanner.nextLine().trim();}
-        if (confirm.equalsIgnoreCase("Y")) {
-            output.println("Borrowing transaction in progress...");
-            output.flush();
-            Borrower borrower = findBorrower(currentUser);
-
-            //book is checked out, current borrower hasn't checked it out, and they have less than 3 books borrowed - offer to place hold
-            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getCurrentBorrower() != borrower && borrower.getNumBorrowedBooks() < 3){
-                output.println("This book is currently checked out. Would you like to place a hold? (y/n)");
-                output.flush();
-                if (scanner.hasNextLine() && scanner.nextLine().trim().equalsIgnoreCase("Y")){
-                    addBookOnHold(book.getTitle());
-                    output.println("You have been added to the hold queue for this book");
-                    output.flush();
-                    return false;
-                }
-                else{
-                    output.println("Hold cancelled");
-                    output.flush();
-                    return false;
-                }
-            }
-
-            //book is on hold and the current borrower hasn't placed a hold on it - offer to place hold
-            if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().contains(currentUser)){
-                output.println("This book is currently on hold by another borrower. Would you like to place a hold? (y/n)");
-                output.flush();
-                if (scanner.hasNextLine() && scanner.nextLine().trim().equalsIgnoreCase("Y")){
-                    addBookOnHold(book.getTitle());
-                    output.println("You have been added to the hold queue for this book");
-                    output.flush();
-                    return false;
-                }
-                else{
-                    output.println("Hold cancelled");
-                    output.flush();
-                    return false;
-                }
-            }
-
-            //book is available, but current borrower has currently borrowed 3 books - offer to place hold
-            if (book.getStatus().equals(BookStatus.AVAILABLE) && borrower.getNumBorrowedBooks() == 3){
-                output.println("You have met the 3 book borrow limit and currently can not borrow this book. Would you like to place a hold? (y/n)");
-                output.flush();
-                if (scanner.hasNextLine() && scanner.nextLine().trim().equalsIgnoreCase("Y")){
-                    addBookOnHold(book.getTitle());
-                    output.println("You have been added to the hold queue for this book");
-                    output.flush();
-                    return true;
-                }
-                else{
-                    output.println("Hold cancelled");
-                    output.flush();
-                    return true;
-                }
-            }
-
-            //book is on hold, borrower has already placed hold, and they are not first in the hold queue - no hold or borrow
-            if (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().contains(currentUser) && !book.getHoldQueue().peek().contains(currentUser)){
-                output.println("You already have a hold on this book");
-                output.flush();
-                return false;
-            }
-
-            //book is checked out, and borrower has borrowed it - no hold or borrow
-            if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getCurrentBorrower() == borrower){
-                output.println("You already have this book checked out");
-                output.flush();
-                return false;
-            }
-
-            //book is on hold, but current borrower has currently borrowed 3 books - no borrow or hold
-            if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().isEmpty() && book.getHoldQueue().peek().equals(currentUser) && borrower.getNumBorrowedBooks() == 3){
-                output.println("You have met the 3 book borrow limit and currently can not borrow this book. Please return at least one book before trying to borrow again.");
-                output.flush();
-            }
-
-            //book is available and borrower has borrowed less than 3 books - allow borrow
-            if ((book.getStatus().equals(BookStatus.AVAILABLE) || (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().peek().equals(currentUser))) && borrower.getNumBorrowedBooks() < 3){
-                borrowBook(book.getTitle());
-                if (book.getHoldQueue().contains(getCurrentUser())){
-                    book.removeBorrowerHoldQueue(getCurrentUser());
-                }
-                output.println("You have successfully borrowed " + book.getTitle() + ". Due date is " + book.getDueDate());
-                output.println("To acknowledge completion, hit Enter: ");
-                output.flush();
-
-                while (true) {
-                    //user entered next line as confirmation, return to main menu
-                    if (scanner.nextLine().trim().isEmpty()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        else{
+        if (!confirm.equalsIgnoreCase("Y")) {
             output.println("Borrowing cancelled.");
             output.flush();
             return false;
         }
-        return true;
+
+        output.println("Borrowing transaction in progress...");
+        output.flush();
+
+        boolean wantsHold = false;
+        boolean provideHold = attemptBookBorrow(currentUser, book.getTitle(), false, output);
+
+        if (provideHold) {
+            output.println("Would you like to place a hold? (y/n)");
+            output.flush();
+            wantsHold = scanner.nextLine().trim().equalsIgnoreCase("Y");
+            if (!attemptBookBorrow(currentUser, book.getTitle(), wantsHold, output)){
+                return true;
+            }
+        }
+
+        if (book.getCurrentBorrower() != null && book.getCurrentBorrower().getUsername().equals(currentUser)) {
+            output.println("To acknowledge completion, press Enter: ");
+            output.flush();
+
+            while (true) {
+                //user entered next line as confirmation, return to main menu
+                if (scanner.nextLine().trim().isEmpty()) {
+                    return true;
+                }
+            }
+        }
+
+        output.flush();
+        return false;
+    }
+
+
+    public boolean attemptBookBorrow(String username, String title, boolean wantsHold, PrintWriter output) {
+        Borrower borrower = findBorrower(username);
+        Book book = getBookByTitle(title);
+
+        //book is checked out, current borrower hasn't checked it out, and they have less than 3 books borrowed - offer to place hold
+        if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getCurrentBorrower() != borrower && borrower.getNumBorrowedBooks() <= 3){
+            output.println("This book is currently checked out. Would you like to place a hold? (y/n)");
+            output.flush();
+            if (wantsHold){
+                addBookOnHold(book.getTitle());
+                output.println("You have been added to the hold queue for this book");
+                output.flush();
+                return false;
+            }
+            return true;
+        }
+
+        //book is on hold and the current borrower hasn't placed a hold on it - offer to place hold
+        if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().contains(currentUser)) {
+            output.println("This book is currently on hold by another borrower. Would you like to place a hold? (y/n)");
+            output.flush();
+            if (wantsHold){
+                addBookOnHold(book.getTitle());
+                output.println("You have been added to the hold queue for this book");
+                output.flush();
+                return false;
+            }
+            return true;
+        }
+
+        //book is available, but current borrower has currently borrowed 3 books - offer to place hold
+        if (book.getStatus().equals(BookStatus.AVAILABLE) && borrower.getNumBorrowedBooks() == 3) {
+            output.println("You have met the 3 book borrow limit and currently can not borrow this book.");
+            output.flush();
+            if (wantsHold){
+                addBookOnHold(book.getTitle());
+                output.println("You have been added to the hold queue for this book");
+                output.flush();
+                return false;
+            }
+            return true;
+        }
+
+        //book is on hold, borrower has already placed hold, and they are not first in the hold queue - no hold or borrow
+        if (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().contains(currentUser) && !book.getHoldQueue().peek().contains(currentUser)) {
+            output.println("You already have a hold on this book");
+            output.flush();
+            return false;
+        }
+
+        //book is checked out, and borrower has borrowed it - no hold or borrow
+        if (book.getStatus().equals(BookStatus.CHECKED_OUT) && book.getCurrentBorrower() == borrower) {
+            output.println("You already have this book checked out");
+            output.flush();
+            return false;
+        }
+
+        //book is on hold, but current borrower has currently borrowed 3 books - no borrow or hold
+        if (book.getStatus().equals(BookStatus.ON_HOLD) && !book.getHoldQueue().isEmpty() && book.getHoldQueue().peek().equals(currentUser) && borrower.getNumBorrowedBooks() == 3) {
+            output.println("You have met the 3 book borrow limit and currently can not borrow this book. Please return at least one book before trying to borrow again.");
+            output.flush();
+            return false;
+        }
+
+        if ((book.getStatus().equals(BookStatus.AVAILABLE) || (book.getStatus().equals(BookStatus.ON_HOLD) && book.getHoldQueue().peek().equals(currentUser))) && borrower.getNumBorrowedBooks() < 3) {
+            borrowBook(book.getTitle());
+            if (book.getHoldQueue().contains(getCurrentUser())) {
+                book.removeBorrowerHoldQueue(getCurrentUser());
+            }
+            output.println("You have successfully borrowed " + book.getTitle() + ". Due date is " + book.getDueDate());
+            return false;
+        }
+        return false;
     }
 
     public boolean returnBook(Scanner scanner, PrintWriter output){
@@ -266,10 +323,8 @@ public class Library {
             Borrower borrower = findBorrower(currentUser);
 
             //check if borrower has any borrowed books
-            if (borrower.getNumBorrowedBooks() == 0) {
-                output.println("You have no books currently borrowed.");
-                output.flush();
-                return true; // return to menu
+            if (!canReturnBooks(getCurrentUser())){
+                return false;
             }
 
             //display borrowed books
@@ -286,17 +341,9 @@ public class Library {
                 int choice = scanner.nextInt();
                 Book bookToReturn = borrowedBooks.get(choice - 1);
 
-                //check for pending holds
-                if (!bookToReturn.getHoldQueue().isEmpty()) {
-                    bookToReturn.setStatus(BookStatus.ON_HOLD);
+                if (!processBookReturn(getCurrentUser(), bookToReturn)){
+                    return false;
                 }
-                else {
-                    bookToReturn.setStatus(BookStatus.AVAILABLE);
-                }
-
-                borrower.removeBorrowedBook(bookToReturn); //remove book from original borrower account
-                bookToReturn.setCurrentBorrower(null); //clear current borrower
-                borrower.decreaseNumBorrowedBooks(); //decrease number of books borrowed
 
                 output.println("You have successfully returned " + bookToReturn.getTitle() + ". Hit Enter to continue: ");
                 output.flush();
@@ -311,6 +358,38 @@ public class Library {
         return true;
     }
 
+    public boolean canReturnBooks(String username){
+        Borrower borrower = findBorrower(username);
+        if (!borrower.getBorrowedBooks().isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean processBookReturn(String username, Book bookToReturn) {
+        Borrower borrower = findBorrower(username);
+
+        if (borrower.getNumBorrowedBooks() == 0) {
+            return false;
+        }
+
+        //check for pending holds
+        if (!bookToReturn.getHoldQueue().isEmpty()) {
+            bookToReturn.setStatus(BookStatus.ON_HOLD);
+        }
+        else {
+            bookToReturn.setStatus(BookStatus.AVAILABLE);
+        }
+
+        borrower.removeBorrowedBook(bookToReturn); //remove book from original borrower account
+        bookToReturn.setCurrentBorrower(null); //clear current borrower
+        bookToReturn.clearDueDate(); //remove current due date
+        borrower.decreaseNumBorrowedBooks(); //decrease number of books borrowed
+
+        return true;
+    }
+
+
     public boolean logout(Scanner scanner, PrintWriter output) {
         output.println("Are you sure you want to logout? (y/n)");
         output.flush();
@@ -318,7 +397,7 @@ public class Library {
         if (scanner.hasNextLine()) {
             String confirm = scanner.nextLine().trim();
             if (confirm.equalsIgnoreCase("Y")) {
-                currentUser = null; //clear current session
+                confirmLogout();
                 output.println("You have successfully logged out.");
                 output.flush();
                 return true;
@@ -329,6 +408,11 @@ public class Library {
             }
         }
         return false;
+    }
+
+    public boolean confirmLogout() {
+        currentUser = null; //clear current session
+        return true;
     }
 
     //Getters

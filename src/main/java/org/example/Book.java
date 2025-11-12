@@ -58,6 +58,10 @@ public class Book {
         dueDate = LocalDate.now().plusDays(days);
     }
 
+    public void clearDueDate(){
+        dueDate = null;
+    }
+
     public void addHoldQueue(String username){
         holdQueue.add(username);
     }
