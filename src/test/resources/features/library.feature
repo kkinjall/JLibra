@@ -1,8 +1,5 @@
 Feature: Library Operations
 
-#  Background: The library system is initialized
-#    Given the library system is initialized with all 20 books and 3 accounts
-
   #Scenario 1: Corresponding to A1 A-TEST-01,
   # test the basic borrow-return cycle with two users and one book
   Scenario Outline: A borrowed book becomes unavailable, but when returned is available again
