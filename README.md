@@ -21,4 +21,4 @@ pops up, click on Chrome, click on Start E2E Testing in Chrome, and click on lib
 
 ## Use of LLMs
 ChatGPT was used to convert the Java code for the Book, Borrower, and Library classes, along with the BookStatus enum to
-JavaScript.
+JavaScript. It was also used for the frontend development. Cypress UI tests were done without the use of AI.

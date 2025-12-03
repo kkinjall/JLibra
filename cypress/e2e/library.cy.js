@@ -18,7 +18,7 @@ describe('Library Book Management', () => {
         expect(txt).to.include('You have successfully borrowed "The Great Gatsby". Due:');
       }
       //Assertion: Return alert displays correct message when book is returned
-      //Confirms that returning the book triggers the correct confirmation message to the use
+      //Confirms that returning the book triggers the correct confirmation message to the user
       else if (txt.includes('returned')) {
         expect(txt).to.include('You have successfully returned "The Great Gatsby"');
       }
