@@ -1,0 +1,28 @@
+{
+  "name": "a1-kamboj-kinjal-101227444",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cypress.config.js",
+  "scripts": {
+    "start": "node server.js",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkinjall/A1-Kamboj-Kinjal-101227444.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kkinjall/A1-Kamboj-Kinjal-101227444/issues"
+  },
+  "homepage": "https://github.com/kkinjall/A1-Kamboj-Kinjal-101227444#readme",
+  "dependencies": {
+    "express": "5.1"
+  },
+  "devDependencies": {
+    "cypress": "^15.7.0"
+  }
+}

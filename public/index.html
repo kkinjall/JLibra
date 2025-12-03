@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Library - Home</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width:900px; margin:24px auto; }
+        header { display:flex; justify-content:space-between; align-items:center; }
+        .book { border:1px solid #ccc; padding:10px; margin:8px 0; border-radius:6px; }
+        .status-AVAILABLE { color:green; font-weight:700; }
+        .status-CHECKED_OUT { color:red; font-weight:700; }
+        .status-ON_HOLD { color:orange; font-weight:700; }
+        #message { padding:10px; border-radius:6px; display:none; margin:10px 0; }
+        #message.success { background:#d4edda; color:#155724; }
+        #message.error { background:#f8d7da; color:#721c24; }
+        .controls { margin-top:8px; }
+        button { margin-right:8px; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to the Library System</h1>
+    <div>
+        <span id="userDisplay"></span>
+        <button id="logoutBtn">Logout</button>
+    </div>
+</header>
+
+<div id="message"></div>
+
+<section>
+    <h2>Notifications</h2>
+    <div id="notifications"></div>
+</section>
+
+<section>
+    <h2>My Borrowed Books (<span id="borrowCount">0</span>/3)</h2>
+    <div id="borrowed"></div>
+</section>
+
+<section>
+    <h2>Available Books</h2>
+    <div id="books"></div>
+</section>
+
+<script>
+    async function fetchUser() {
+        const res = await fetch('/api/user');
+        if (!res.ok) {
+            window.location.href = '/';
+            return null;
+        }
+        const data = await res.json();
+        document.getElementById('userDisplay').textContent = `Logged in as: ${data.name}`;
+        return data.name;
+    }
+
+async function loadBooks() {
+    const res = await fetch('/api/books');
+    const books = await res.json();
+    const container = document.getElementById('books');
+    container.innerHTML = '';
+
+    const currentUser = document.getElementById('userDisplay').textContent.split(': ')[1];
+    const currentBorrowCount = parseInt(document.getElementById('borrowCount').textContent);
+    console.log('Current Borrow Count:', currentBorrowCount);
+
+    books.forEach(b => {
+        const div = document.createElement('div');
+        div.className = 'book';
+
+        const status = b.status;
+        const title = b.title;
+        const author = b.author;
+        const dueDate = b.dueDate;
+        const holdQueue = b.holdQueue;
+        const currentBorrower = b.currentBorrower;
+        const reservedFor = b.reservedFor;
+
+        // Determine buttons
+        let buttons = '';
+        if (status === 'AVAILABLE') {
+            buttons += `<button data-action="borrow" data-title="${title}">Borrow</button>`;
+        } else if (status === 'ON_HOLD' && reservedFor == currentUser && currentBorrowCount < 3) {
+            buttons += `<button data-action="borrow" data-title="${title}">Borrow (Your Hold)</button>`;
+        } else if ((status === 'CHECKED_OUT' || status === 'ON_HOLD') &&
+                   currentBorrower !== currentUser &&
+                   reservedFor !== currentUser) {
+            buttons += `<button data-action="hold" data-title="${title}">Place Hold</button>`;
+        }
+
+        div.innerHTML = `
+            <strong>${title}</strong> — ${author}<br>
+            Status: <span class="status-${status}">${status}</span><br>
+            ${dueDate ? `Due: ${new Date(dueDate).toLocaleDateString()}` : ''}
+            <div class="controls">
+                ${buttons}
+            </div>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+
+    async function loadBorrowed() {
+        const res = await fetch('/api/borrowed');
+        const borrowed = await res.json();
+        const container = document.getElementById('borrowed');
+        container.innerHTML = '';
+        document.getElementById('borrowCount').textContent = borrowed.length;
+
+        borrowed.forEach((b, i) => {
+        const div = document.createElement('div');
+        div.className = 'book';
+        div.innerHTML = `
+            <strong>${b.title}</strong> — ${b.author}<br>
+            Due: ${b.dueDate || 'N/A'}<br>
+            <div class="controls">
+                <button data-action="return" data-title="${b.title}">Return</button>
+            </div>
+        `;
+    container.appendChild(div);
+});
+    }
+
+    async function loadNotifications() {
+        const res = await fetch('/api/notifications');
+        const notes = await res.json();
+        const container = document.getElementById('notifications');
+        container.innerHTML = notes.length === 0 ? '<em>No notifications</em>' : notes.map(n => `<div>${n}</div>`).join('');
+    }
+
+    // Delegated button handler
+    document.addEventListener('click', async (ev) => {
+        const btn = ev.target.closest('button[data-action]');
+        if (!btn) return;
+
+        const action = btn.dataset.action;
+        const title = btn.dataset.title;
+        const index = btn.dataset.index;
+
+        if (action === 'borrow') {
+            const res = await fetch(`/api/borrow/${encodeURIComponent(title)}`, { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) alert(data.message);
+            else alert(data.error || 'Failed to borrow');
+        } else if (action === 'hold') {
+            const res = await fetch(`/api/hold/${encodeURIComponent(title)}`, { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) alert(data.message);
+            else alert(data.error || 'Failed to place hold');
+        } else if (action === 'return') {
+            const title = btn.dataset.title;
+            const res = await fetch(`/api/return/${encodeURIComponent(title)}`, { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) alert(data.message);
+            else alert(data.error || 'Failed to return book');
+            }
+        await refreshAll();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await fetch('/api/logout', { method: 'POST' });
+        window.location.href = '/';
+    });
+
+    async function refreshAll() {
+        await loadBorrowed();
+        await loadBooks();
+        await loadNotifications();
+    }
+
+    (async () => {
+        await fetchUser();
+        await refreshAll();
+    })();
+</script>
+</body>
+</html>
