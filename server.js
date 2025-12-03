@@ -23,7 +23,6 @@ app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const ok = library.confirmLogin(username, password);
   if (ok) {
-    // Library.confirmLogin sets library.currentUser internally; keep server copy too
     currentUser = library.getCurrentUser();
     return res.json({ success: true, user: currentUser });
   }
@@ -44,7 +43,7 @@ app.get('/api/user', (req, res) => {
 });
 
 
-// Helper to serialize Book objects to plain JSON
+//Helper to serialize Book objects to plain JSON
 function serializeBook(book) {
   const borrowerObj = book.getCurrentBorrower ? book.getCurrentBorrower() : null;
   return {
@@ -69,7 +68,7 @@ app.get('/api/books', (req, res) => {
   res.json(books);
 });
 
-//borrower's borrowed books
+//Borrower's borrowed books
 app.get('/api/borrowed', (req, res) => {
   if (!currentUser) return res.json([]);
   const borrower = library.findBorrower(currentUser);
@@ -82,7 +81,7 @@ app.get('/api/borrowed', (req, res) => {
   res.json(borrowed);
 });
 
-//get any notifications to display
+//Get any notifications to display
 app.get('/api/notifications', (req, res) => {
   if (!currentUser) return res.json([]);
   const notes = library.notifyOfAvailableBooks(); // already returns array of strings
