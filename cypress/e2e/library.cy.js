@@ -287,10 +287,13 @@ describe('Library Book Management', () => {
 
     //Assertion: Borrow button for the target book should exist
     //Ensures the book is currently available for Bob to borrow
-    cy.contains('.book', bookToHold)
-      .find('button[data-action="borrow"]')
-      .should('exist')
-      .click();
+    //Need to do this structure of getting buttons due to the element not existing after page is refreshed
+    cy.contains('.book', bookToHold).within(() => {
+        cy.get('button[data-action="borrow"]')
+        .should('exist')
+        .as('borrowBtn');
+    });
+    cy.get('@borrowBtn').click();
 
     //Bob logs out
     cy.get('#logoutBtn').click();
@@ -301,10 +304,12 @@ describe('Library Book Management', () => {
     //Assertion: Borrow button for each selected book should exist
     //Confirms each book Alice needs to borrow is available so she reaches the borrowing limit of 3 books
     booksToBorrow.forEach((title) => {
-      cy.contains('.book', title)
-        .find('button[data-action="borrow"]')
-        .should('be.visible')
-        .click();
+        cy.contains('.book', title).within(() => {
+            cy.get('button[data-action="borrow"]')
+            .should('exist')
+            .as('borrowBtn');
+        });
+        cy.get('@borrowBtn').click();
     });
 
     //Assertion: Borrow count should now be 3
@@ -313,17 +318,21 @@ describe('Library Book Management', () => {
 
     //Assertion: Borrow button exists for the book Alice tries to borrow when at the borrowing limit
     //Validates that the UI allows attempted borrow interaction, and sets up the rule enforcement as an alert that she cannot exceed the borrowing limit
-    cy.contains('.book', attemptToBorrowBook)
-      .find('button[data-action="borrow"]')
-      .should('exist')
-      .click();
+    cy.contains('.book', attemptToBorrowBook).within(() => {
+        cy.get('button[data-action="borrow"]')
+        .should('exist')
+        .as('borrowBtn');
+    });
+    cy.get('@borrowBtn').click();
 
     //Assertion: Hold button should exist for the targeted book
     //Confirms the system allows hold placement when a book is unavailable, fulfilling the scenario’s requirement about hold queues
-    cy.contains('.book', bookToHold)
-      .find('button[data-action="hold"]')
-      .should('exist')
-      .click();
+    cy.contains('.book', bookToHold).within(() => {
+        cy.get('button[data-action="hold"]')
+        .should('exist')
+        .as('holdBtn');
+    });
+    cy.get('@holdBtn').click();
 
     //Alice logs out
     cy.get('#logoutBtn').click();
@@ -333,10 +342,12 @@ describe('Library Book Management', () => {
 
     //Assertion: Return button for the held book should exist
     //Scenario requires that user can return the book, which will trigger the hold-release notification for Alice
-    cy.contains('#borrowed .book', bookToHold)
-      .find('button[data-action="return"]')
-      .should('exist')
-      .click();
+    cy.contains('#borrowed .book', bookToHold).within(() => {
+        cy.get('button[data-action="return"]')
+        .should('exist')
+        .as('returnBtn');
+    });
+    cy.get('@returnBtn').click();
 
     //Bob logs out
     cy.get('#logoutBtn').click();
@@ -346,10 +357,12 @@ describe('Library Book Management', () => {
 
     //Assertion: Return button for another book should exist
     //Ensures Alice can return a book, bringing her borrowed count below the limit so she becomes eligible to borrow the held book once it is released
-    cy.contains('#borrowed .book', 'The Hobbit')
-      .find('button[data-action="return"]')
-      .should('exist')
-      .click();
+    cy.contains('#borrowed .book', 'The Hobbit').within(() => {
+        cy.get('button[data-action="return"]')
+        .should('exist')
+        .as('returnBtn2');
+    });
+    cy.get('@returnBtn2').click();
 
     //Assertion: Borrow count returns to 2
     //Scenario requires the borrow count to decrease after returning a book
@@ -362,10 +375,12 @@ describe('Library Book Management', () => {
 
     //Assertion: Alice can now borrow the book she had on hold
     //Scenario requires user to become eligible when being below the maximum borrow limit
-    cy.contains('.book', bookToHold)
-      .find('button[data-action="borrow"]')
-      .should('exist')
-      .click();
+    cy.contains('.book', bookToHold).within(() => {
+        cy.get('button[data-action="borrow"]')
+        .should('exist')
+        .as('borrowBtnFinal');
+    });
+    cy.get('@borrowBtnFinal').click();
 
     //Assertion: Alice is back to 3 borrowed books
     //Scenario requires that the UI should reflect any books being borrowed for the current user
