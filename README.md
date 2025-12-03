@@ -7,7 +7,7 @@ This project is a library management system in the form of a web application bui
 
 ## Setup Instructions
 1. Clone the repository from A3-Cypress-Kamboj branch.
-2. Open the terminal within the project folder (Command Prompt preferred).
+2. Open the terminal within the project folder (Command Prompt preferred). You will have to open it inside the directory where you can see the README, server.js, package.json and similar config files.
 3. Run 'npm install' to install the dependencies.
 
 ## Running the Application
