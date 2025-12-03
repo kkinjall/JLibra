@@ -1,4 +1,5 @@
 //server.js
+//copied some code from SimpleDemo on course brightspace as starting point
 const express = require('express');
 const path = require('path');
 const Library = require('./src/models/Library');
@@ -9,8 +10,7 @@ const PORT = 3000;
 const library = new Library();
 library.initializeLibrary();
 
-//track logged-in user with single user session
-let currentUser = null;
+let currentUser = null; //track logged in user
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -42,7 +42,6 @@ app.get('/api/user', (req, res) => {
   return res.json({ name: currentUser });
 });
 
-
 //Helper to serialize Book objects to plain JSON
 function serializeBook(book) {
   const borrowerObj = book.getCurrentBorrower ? book.getCurrentBorrower() : null;
@@ -62,7 +61,7 @@ function serializeBook(book) {
             };
       }
 
-//all books
+//Get all books
 app.get('/api/books', (req, res) => {
   const books = library.getBooks().map(serializeBook);
   res.json(books);
@@ -144,7 +143,6 @@ app.post('/api/hold/:title', (req, res) => {
     return res.status(400).json({ error: 'Hold failed (book not found or already on hold for you)' });
   }
 });
-
 
 //Reset endpoint
 app.post('/api/reset', (req, res) => {
