@@ -1,9 +1,14 @@
 # Library Management System
 
 ## Project Overview
-This project is a library management system in the form of a web application built with Node.js, JavaScript and Express. Cypress was used to write UI tests.
+This project is a library management system in the form of a web application built with Node.js, Express, and JavaScript. Cypress was used to write UI tests. 
+This project also involved Test-Driven-Development (TDD) through JUnit test cases in the master branch, and Behaviour-Driven-Development (BDD) test cases with a Cucumber framework and Gherkin scenarios in the A2-BDD-Kamboj branch. 
 
-## Setup Instructions
+## Setup Instructions for Running TDD and BDD Tests
+1. Clone the reposiotry from the master and A2-BDD-Kamboj branch.
+2. For master branch, simply run the tests through running the test file. For the second branch, simply run the RunCucumberTest.java file.
+
+## Setup Instructions for Running Cypress UI Tests
 1. Clone the repository from A3-Cypress-Kamboj branch.
 2. Open the terminal within the project folder (Command Prompt preferred). You will have to open it inside the directory where you can see the README, server.js, package.json and similar config files.
 3. Run 'npm install' to install the dependencies.
