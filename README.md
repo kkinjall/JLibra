@@ -1,6 +1,4 @@
-#Library Management System
-
-### Kinjal Kamboj
+# Library Management System
 
 ## Project Overview
 This project is a library management system in the form of a web application built with Node.js, JavaScript and Express. Cypress was used to write UI tests.
