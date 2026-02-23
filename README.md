@@ -1,7 +1,3 @@
-# COMP4004: Library Management System - Assignment 3
-
-### Kinjal Kamboj, 101227444
-
 ## Project Overview
 This project is a library management system in the form of a web application built with JavaScript, Node.js and Express.
 
