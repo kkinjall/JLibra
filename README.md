@@ -1,4 +1,4 @@
-# Library Management System
+# JLibra
 
 ## Project Overview
 This project is a library management system in the form of a web application built with Node.js, Express, and JavaScript. Cypress was used to write UI tests. 
